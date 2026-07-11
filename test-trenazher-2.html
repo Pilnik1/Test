@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест-тренажёр — Экономика и ИТ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EAEDE6;
+    --paper-card: #F6F7F2;
+    --ink: #23261F;
+    --ink-soft: #5B5F54;
+    --line: #C9CDBE;
+    --econ: #2F6B4F;
+    --econ-soft: #DCE9E0;
+    --it: #33449A;
+    --it-soft: #DFE2F1;
+    --wrong: #B3452B;
+    --wrong-soft: #F3E0DA;
+    --shadow: 0 1px 0 rgba(35,38,31,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px);
+    background-size: 100% 42px;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:32px 20px 80px;
+  }
+  .app-header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:34px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .app-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+  }
+  .app-sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .screen{ display:none; animation: fadeIn .35s ease; }
+  .screen.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- HOME ---------- */
+  .hero{
+    margin-bottom:36px;
+  }
+  .hero h1{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(28px, 5vw, 40px);
+    line-height:1.15;
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .hero p{
+    color:var(--ink-soft);
+    font-size:15px;
+    max-width:56ch;
+    margin:0;
+  }
+  .subject-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  @media (max-width:640px){ .subject-grid{ grid-template-columns:1fr; } }
+
+  .subject-card{
+    background:var(--paper-card);
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    padding:26px 22px 22px;
+    cursor:pointer;
+    position:relative;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:4px 4px 0 rgba(35,38,31,0.9);
+  }
+  .subject-card:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 rgba(35,38,31,0.9); }
+  .subject-card:active{ transform:translate(0,0); box-shadow:2px 2px 0 rgba(35,38,31,0.9); }
+  .subject-card .code{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    padding:3px 8px;
+    border-radius:20px;
+    display:inline-block;
+    margin-bottom:14px;
+    font-weight:600;
+  }
+  .subject-card.econ .code{ background:var(--econ-soft); color:var(--econ); }
+  .subject-card.it .code{ background:var(--it-soft); color:var(--it); }
+  .subject-card h2{
+    font-size:21px;
+    margin:0 0 8px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .subject-card p{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+    line-height:1.5;
+  }
+  .subject-card .meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    border-top:1px dashed var(--line);
+    padding-top:12px;
+  }
+  .subject-card .arrow{ font-size:16px; }
+
+  /* ---------- TOPICS ---------- */
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    margin-bottom:22px;
+    background:none;
+    border:none;
+    padding:0;
+  }
+  .back-link:hover{ color:var(--ink); }
+  .topics-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:24px;
+    margin:0 0 4px;
+  }
+  .topics-desc{ color:var(--ink-soft); font-size:14px; margin:0 0 24px; }
+  .topic-list{ display:flex; flex-direction:column; gap:10px; }
+  .topic-row{
+    background:var(--paper-card);
+    border:1.5px solid var(--ink);
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .topic-row:hover{ background:#fff; }
+  .topic-row .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:#fff;
+    width:26px; height:26px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    flex-shrink:0;
+    margin-right:14px;
+  }
+  .topic-row .info{ display:flex; align-items:center; flex:1; min-width:0; }
+  .topic-row .name{ font-size:14.5px; font-weight:500; }
+  .topic-row .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-left:auto;
+    padding-right:14px;
+    white-space:nowrap;
+  }
+  .topic-row .best{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:3px 9px;
+    border-radius:20px;
+    background:var(--econ-soft);
+    color:var(--econ);
+    margin-right:12px;
+    white-space:nowrap;
+  }
+
+  .exam-card{
+    background:var(--ink);
+    color:var(--paper);
+    border:1.5px solid var(--ink);
+    padding:20px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    cursor:pointer;
+    margin-bottom:22px;
+    transition:opacity .12s ease;
+  }
+  .exam-card:hover{ opacity:0.88; }
+  .exam-card .exam-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#B9BCAE;
+    margin-bottom:5px;
+  }
+  .exam-card .exam-title{ font-size:16.5px; font-weight:600; }
+  .exam-card .exam-desc{ font-size:12.5px; color:#C7CABB; margin-top:3px; }
+  .exam-card .exam-arrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:20px;
+    flex-shrink:0;
+  }
+  .divider-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+  }
+
+  .mode-toggle{
+    display:flex;
+    gap:8px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .mode-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:9px 14px;
+    border:1.5px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+    border-radius:20px;
+  }
+  .mode-btn.active{ background:var(--ink); color:var(--paper); }
+  .mode-hint{ font-size:12.5px; color:var(--ink-soft); margin:-10px 0 22px; }
+
+  .recall-box{
+    background:var(--paper-card);
+    border:1.5px solid var(--line);
+    padding:16px;
+    margin-bottom:6px;
+  }
+  .recall-box textarea{
+    width:100%;
+    min-height:110px;
+    resize:vertical;
+    border:none;
+    background:transparent;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:14.5px;
+    color:var(--ink);
+    outline:none;
+    line-height:1.5;
+  }
+  .recall-box .recall-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+    display:block;
+  }
+  .model-answer{
+    padding:16px;
+    border-left:3px solid var(--ink);
+    background:var(--paper-card);
+    font-size:14px;
+    line-height:1.6;
+    margin-bottom:22px;
+  }
+  .model-answer strong{
+    display:block;
+    margin-bottom:6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .rate-buttons{ display:flex; gap:10px; width:100%; justify-content:flex-end; flex-wrap:wrap; }
+  .rate-buttons .btn.knew{ background:var(--econ); border-color:var(--econ); color:#fff; }
+  .rate-buttons .btn.didnt{ background:var(--wrong); border-color:var(--wrong); color:#fff; }
+
+  /* ---------- CONSPECT (reading mode) ---------- */
+  .conspect-content h4{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px;
+    margin:26px 0 10px;
+    color:var(--ink);
+  }
+  .conspect-content h4:first-child{ margin-top:0; }
+  .conspect-content p{ font-size:14.5px; line-height:1.65; margin:0 0 14px; }
+  .conspect-content ul, .conspect-content ol{ margin:0 0 14px; padding-left:20px; }
+  .conspect-content li{ font-size:14.5px; line-height:1.65; margin-bottom:7px; }
+  .conspect-content li ul{ margin-top:7px; }
+  .formula{
+    font-family:'IBM Plex Mono', monospace;
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    padding:12px 16px;
+    margin:10px 0 18px;
+    font-size:13px;
+    line-height:1.7;
+    white-space:pre-wrap;
+    overflow-x:auto;
+  }
+  .practice-box{
+    background:var(--paper-card);
+    border-left:3px solid var(--ink);
+    padding:14px 16px;
+    margin:6px 0 24px;
+    font-size:14px;
+    line-height:1.65;
+  }
+  .practice-box strong{
+    display:block;
+    margin-bottom:6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .conspect-chapter{
+    margin-bottom:36px;
+    padding-bottom:30px;
+    border-bottom:1px dashed var(--line);
+  }
+  .conspect-chapter:last-child{ border-bottom:none; }
+  .conspect-chapter-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:19px;
+    margin:0 0 16px;
+  }
+  .conspect-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    gap:10px;
+  }
+  .conspect-nav-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:9px 14px;
+    border:1.5px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+    border-radius:2px;
+  }
+  .conspect-nav-btn:disabled{ opacity:0.25; cursor:not-allowed; }
+  .conspect-nav-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    flex:1;
+  }
+
+  /* ---------- QUIZ ---------- */
+  .quiz-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .quiz-topic-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .quiz-score{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    font-weight:600;
+  }
+  .progress-track{
+    height:6px;
+    background:var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    margin-bottom:30px;
+  }
+  .progress-fill{
+    height:100%;
+    border-radius:4px;
+    transition:width .3s ease;
+  }
+  .q-index{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .q-text{
+    font-size:19px;
+    line-height:1.45;
+    margin:0 0 26px;
+    font-weight:500;
+  }
+  .options{ display:flex; flex-direction:column; gap:11px; margin-bottom:26px; }
+  .option{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--paper-card);
+    border:1.5px solid var(--line);
+    padding:14px 16px;
+    cursor:pointer;
+    text-align:left;
+    font-size:14.5px;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .option:hover:not(.locked){ border-color:var(--ink); }
+  .option .bubble{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    font-weight:700;
+    width:28px; height:28px;
+    flex-shrink:0;
+    border-radius:50%;
+    border:1.5px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .option.selected .bubble{ background:var(--ink); color:#fff; }
+  .option.correct{ border-color:var(--econ); background:var(--econ-soft); }
+  .option.correct .bubble{ background:var(--econ); border-color:var(--econ); color:#fff; }
+  .option.incorrect{ border-color:var(--wrong); background:var(--wrong-soft); }
+  .option.incorrect .bubble{ background:var(--wrong); border-color:var(--wrong); color:#fff; }
+  .option.locked{ cursor:default; }
+
+  .feedback{
+    display:none;
+    padding:14px 16px;
+    border-left:3px solid var(--ink);
+    background:var(--paper-card);
+    font-size:13.5px;
+    line-height:1.55;
+    margin-bottom:22px;
+  }
+  .feedback.show{ display:block; animation:fadeIn .25s ease; }
+  .feedback.ok{ border-color:var(--econ); }
+  .feedback.bad{ border-color:var(--wrong); }
+  .feedback strong{ display:block; margin-bottom:4px; font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; }
+  .feedback.ok strong{ color:var(--econ); }
+  .feedback.bad strong{ color:var(--wrong); }
+
+  .quiz-actions{ display:flex; justify-content:flex-end; }
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    padding:12px 22px;
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+    border-radius:2px;
+    transition:opacity .15s ease;
+  }
+  .btn:disabled{ opacity:0.3; cursor:not-allowed; }
+  .btn:not(:disabled):hover{ opacity:0.85; }
+  .btn.ghost{
+    background:transparent;
+    color:var(--ink);
+  }
+
+  /* ---------- RESULTS ---------- */
+  .result-card{
+    background:var(--paper-card);
+    border:1.5px solid var(--ink);
+    padding:34px 28px;
+    text-align:center;
+    margin-bottom:24px;
+  }
+  .result-score{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:56px;
+    font-weight:700;
+    line-height:1;
+    margin-bottom:6px;
+  }
+  .result-label{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:22px;
+  }
+  .result-bar-track{
+    height:10px;
+    background:var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    max-width:320px;
+    margin:0 auto 22px;
+  }
+  .result-bar-fill{ height:100%; border-radius:6px; }
+  .result-msg{ font-size:14.5px; max-width:44ch; margin:0 auto; }
+  .result-actions{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  .review-list{ display:flex; flex-direction:column; gap:8px; margin-top:26px; }
+  .review-item{
+    display:flex;
+    gap:12px;
+    padding:12px 14px;
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    font-size:13px;
+  }
+  .review-item .mark{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    flex-shrink:0;
+  }
+  .review-item.ok .mark{ color:var(--econ); }
+  .review-item.bad .mark{ color:var(--wrong); }
+  .review-item .rq{ font-weight:500; margin-bottom:3px; }
+  .review-item .ra{ color:var(--ink-soft); font-size:12.5px; }
+
+  footer.note{
+    margin-top:50px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono', monospace;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="app-header">
+    <div class="app-title">Тест-тренажёр</div>
+    <div class="app-sub" id="headerRight">подготовка к поступлению</div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="hero">
+      <h1>Проверь себя<br>перед экзаменом</h1>
+      <p>Выбери предмет, затем тему — и пройди короткий тест с мгновенной проверкой и объяснением к каждому вопросу.</p>
+    </div>
+    <div class="subject-grid" id="subjectGrid"></div>
+  </div>
+
+  <!-- TOPICS -->
+  <div class="screen" id="screen-topics">
+    <button class="back-link" onclick="goHome()">← ко всем предметам</button>
+    <h2 class="topics-title" id="topicsTitle"></h2>
+    <p class="topics-desc" id="topicsDesc"></p>
+
+    <div class="mode-toggle">
+      <button class="mode-btn" id="modeBtnMcq" onclick="setUiMode('mcq')">Тест — выбор ответа</button>
+      <button class="mode-btn" id="modeBtnRecall" onclick="setUiMode('recall')">Своими словами — как на устном</button>
+      <button class="mode-btn" id="modeBtnRead" onclick="setUiMode('read')">📖 Конспект — читать</button>
+    </div>
+    <p class="mode-hint" id="modeHint"></p>
+
+    <div class="exam-card" id="examCard">
+      <div>
+        <div class="exam-label">Итоговый тест</div>
+        <div class="exam-title" id="examTitle"></div>
+        <div class="exam-desc" id="examDesc">Все вопросы подряд, без подсказок · результат только в конце</div>
+      </div>
+      <div class="exam-arrow">→</div>
+    </div>
+    <div class="divider-label">Или по темам</div>
+    <div class="topic-list" id="topicList"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-top">
+      <div class="quiz-topic-label" id="quizTopicLabel"></div>
+      <div class="quiz-score" id="quizScore"></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="q-index" id="qIndex"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsList"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="quiz-actions" id="recallActions" style="display:none;"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="nextBtn" disabled onclick="primaryAction()">Подтвердить ответ</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="result-card">
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-label" id="resultLabel"></div>
+      <div class="result-bar-track"><div class="result-bar-fill" id="resultBarFill"></div></div>
+      <div class="result-msg" id="resultMsg"></div>
+    </div>
+    <div class="result-actions" id="resultActions"></div>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+
+  <!-- CONSPECT (read mode) -->
+  <div class="screen" id="screen-conspect">
+    <button class="back-link" onclick="goTopics()">← назад к темам</button>
+    <div class="conspect-nav" id="conspectNav" style="display:none;"></div>
+    <h2 class="topics-title" id="conspectTitle"></h2>
+    <div class="conspect-content" id="conspectBody"></div>
+    <div class="conspect-nav" id="conspectBottomNav" style="display:none;"></div>
+  </div>
+
+  <footer class="note">62 вопроса · 2 предмета · без ограничения по времени</footer>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const SUBJECTS = {
+  econ: {
+    name: "Экономика организации",
+    code: "ЭКОН",
+    accent: "econ",
+    desc: "9 тем: от организационно-правовых форм до инвестиций и дисконтирования.",
+    topics: [
+      { id:"e1", name:"Организация как субъект", questions:[
+        {q:"Что отличает ООО от ОДО?", o:["В ООО участники отвечают только вкладом в уставный фонд, в ОДО — дополнительно личным имуществом в пределах лимита","ООО может быть только государственным","В ОДО нельзя иметь больше одного учредителя","Разницы нет, это синонимы"], c:0, e:"ОДО — почти то же, что ООО, но при нехватке фонда участники доплачивают из своего кармана, только с ограничением по сумме."},
+        {q:"Чем отличается ЗАО от ОАО?", o:["ЗАО продаёт акции на бирже всем, ОАО — только узкому кругу","ОАО продаёт акции на бирже всем желающим, ЗАО — только узкому кругу лиц","Это разные названия одного и того же","В ЗАО акций вообще нет"], c:1, e:"Открытое (ОАО) — акции доступны всем на бирже, закрытое (ЗАО) — распределяются только среди «своих»."},
+        {q:"Чем производственный кооператив принципиально отличается от ООО?", o:["В кооперативе участники обязаны ещё и лично трудиться, а не только вносить вклад","В кооперативе не может быть больше 3 человек","Кооператив не может заниматься производством","Кооператив — некоммерческая организация"], c:0, e:"В ООО можно быть просто инвестором. В кооперативе — нужно ещё и лично работать, прибыль делят по трудовому участию."},
+        {q:"Что характерно для унитарного предприятия?", o:["Имущество делится поровну между всеми работниками","Имущество принадлежит одному собственнику и неделимо","Оно обязательно государственное","У него нет уставного фонда"], c:1, e:"У унитарного предприятия нет «долевых» собственников — один хозяин (государство или частное лицо), имущество не делится."},
+        {q:"К какому виду организаций относится главная цель «получение прибыли»?", o:["Только к некоммерческим","К коммерческим организациям","К государственным органам","Ко всем без исключения, включая благотворительные фонды"], c:1, e:"Коммерческие организации создаются именно ради прибыли, некоммерческие — ради другой цели (хотя подрабатывать немного могут)."},
+        {q:"У какой формы организации по конспекту минимальный уставный фонд обычно больше?", o:["У ЗАО он больше, чем у ОАО","У ОАО он больше, чем у ЗАО","Они всегда равны","У унитарного предприятия он больше, чем у ОАО"], c:1, e:"По конспекту: ЗАО — от 100 базовых величин, ОАО — от 400. Открытому обществу, выходящему на биржу, требуется больше капитала. Конкретные цифры на практике стоит сверять с актуальным законодательством."},
+        {q:"Чем полное товарищество отличается от коммандитного?", o:["В полном товариществе все участники отвечают по долгам своим имуществом, в коммандитном есть вкладчики, рискующие только вкладом","Коммандитное товарищество не может вести предпринимательскую деятельность","В полном товариществе не может быть больше одного участника","Разницы нет, это синонимы"], c:0, e:"В коммандитном товариществе, кроме полных товарищей, есть коммандиты — они только вносят вклад и не отвечают всем своим имуществом."},
+        {q:"Какие два документа обычно нужны при создании юридического лица в РБ?", o:["Устав и учредительный договор","Только устав","Только свидетельство о регистрации","Только штатное расписание"], c:0, e:"Учредительный договор заключается, а устав утверждается учредителями — это основные учредительные документы."}
+      ]},
+      { id:"e2", name:"Основные средства", questions:[
+        {q:"Что относится к основным средствам?", o:["Сырьё, которое расходуется за один цикл","Здания, оборудование, транспорт, которые служат больше года","Деньги на расчётном счёте","Готовая продукция на складе"], c:1, e:"Основные средства — то, что используется долго и переносит стоимость на продукцию постепенно, через амортизацию."},
+        {q:"Чем отличается физический износ от морального?", o:["Физический — реальное снашивание, моральный — устаревание при исправном состоянии","Это одно и то же","Моральный износ бывает только у зданий","Физический износ не влияет на стоимость"], c:0, e:"Станок может быть физически исправен, но морально устареть — появилось что-то новое и выгоднее."},
+        {q:"Что показывает фондоотдача?", o:["Сколько продукции получено на рубль, вложенный в основные средства","Сколько работников приходится на один станок","Сколько стоит один станок","Процент износа оборудования"], c:0, e:"Фондоотдача = товарная продукция / стоимость основных средств. Чем выше — тем лучше используется оборудование."},
+        {q:"При линейном способе амортизации сумма списания по годам:", o:["Уменьшается каждый год","Растёт каждый год","Одинакова каждый год","Зависит только от объёма выпуска"], c:2, e:"Линейный способ — самый простой: стоимость делится равными долями на весь срок службы."},
+        {q:"Коэффициент экстенсивности использования оборудования показывает:", o:["Насколько полно используется мощность станка","Насколько полно используется время работы станка","Остаточную стоимость станка","Норму амортизации"], c:1, e:"Экстенсивность — это про ВРЕМЯ (простои/загрузка по часам). Интенсивность — про МОЩНОСТЬ."},
+        {q:"Какие виды оценки основных средств применяются в учёте?", o:["Только рыночная","Первоначальная, восстановительная и остаточная","Только балансовая","Только ликвидационная"], c:1, e:"Первоначальная — цена приобретения, восстановительная — по текущим ценам, остаточная — за вычетом износа."},
+        {q:"Остаточная стоимость основных средств — это:", o:["Первоначальная стоимость минус накопленный износ","Цена, по которой купили станок","Стоимость станка на чёрном рынке","Сумма всех амортизационных отчислений"], c:0, e:"Остаточная стоимость показывает, сколько ещё «осталось» от актива после вычета износа."}
+      ]},
+      { id:"e3", name:"Оборотные средства", questions:[
+        {q:"Главное отличие оборотных средств от основных:", o:["Оборотные средства служат много лет","Оборотные средства расходуются полностью за один цикл и меняют форму","Оборотные средства не участвуют в производстве","Оборотные средства не имеют денежной оценки"], c:1, e:"Сырьё → незавершёнка → готовая продукция → деньги — оборотные средства меняют форму каждый цикл."},
+        {q:"Что показывает коэффициент оборачиваемости?", o:["Сколько раз за период «провернулись» оборотные средства","Остаточную стоимость основных средств","Норму амортизации","Долю активной части основных средств"], c:0, e:"Коб = выручка / средний остаток оборотных средств. Чем больше оборотов — тем эффективнее используются деньги."},
+        {q:"Если ускорить оборачиваемость оборотных средств, компания:", o:["Высвобождает деньги, которые были «заморожены» в запасах","Автоматически увеличивает основные средства","Теряет прибыль","Обязана повысить цены"], c:0, e:"Быстрее оборот — меньше денег нужно «держать» в бизнесе на том же объёме продаж."},
+        {q:"Текущий запас в днях рассчитывается как:", o:["Интервал между поставками","Половина интервала между поставками","Весь производственный цикл","Годовой объём продаж"], c:1, e:"Запас в среднем расходуется равномерно от максимума до нуля, поэтому берут половину интервала."},
+        {q:"Коэффициент загрузки — это:", o:["Обратный показатель к коэффициенту оборачиваемости","То же самое, что фондоотдача","Показатель износа оборудования","Показатель, применяемый только к основным средствам"], c:0, e:"Кз = оборотные средства / выручка — сколько денег «заморожено» на рубль выручки."},
+        {q:"Оборотные средства по способу нормирования делятся на:", o:["Нормируемые и ненормируемые","Только денежные и товарные","Только собственные","Только заёмные"], c:0, e:"Нормируемые — запасы и незавершёнка (для них можно рассчитать норму), ненормируемые — например, отгруженная продукция и денежные средства."},
+        {q:"Чтобы определить потребность в материальных ресурсах, в первую очередь учитывают:", o:["Только цену материалов","Нормы расхода материала на единицу продукции и планируемый объём выпуска","Только остатки на складе","Курс валют"], c:1, e:"Потребность = норма расхода на единицу × планируемый объём производства."}
+      ]},
+      { id:"e4", name:"Трудовые ресурсы", questions:[
+        {q:"Какой метод расчёта численности используют, когда легко нормировать время на операцию?", o:["По трудоёмкости","По нормам обслуживания","По фондоотдаче","По амортизации"], c:0, e:"Метод по трудоёмкости подходит там, где можно точно посчитать нормо-часы на операцию."},
+        {q:"Что такое трудоёмкость?", o:["Количество продукции на одного работника","Количество времени, затраченное на производство единицы продукции","Стоимость оборудования на одного работника","Процент брака"], c:1, e:"Трудоёмкость — обратный показатель к выработке: сколько времени уходит на единицу продукции."},
+        {q:"Какой метод измерения производительности труда позволяет сравнивать разные профессии между собой?", o:["Натуральный","Трудовой","Стоимостный","Условно-натуральный"], c:2, e:"Через деньги можно сравнить производительность повара и токаря — в штуках или часах это невозможно."},
+        {q:"«Принцип опережения» в экономике труда означает:", o:["Зарплата должна расти быстрее производительности труда","Производительность труда должна расти быстрее зарплаты","Зарплата и производительность не связаны","Численность персонала должна расти быстрее выручки"], c:1, e:"Иначе компания просто «проедает» прибыль на зарплаты, реально не производя больше."},
+        {q:"Полезный (эффективный) фонд рабочего времени учитывает:", o:["Только календарные дни года","Календарный фонд за вычетом выходных, праздников, отпусков и т.п.","Только рабочие часы станка","Норму амортизации оборудования"], c:1, e:"Это реальное число часов, которое сотрудник отработает за год с учётом отпусков и больничных."},
+        {q:"По какому признаку персонал делят на рабочих, руководителей, специалистов и служащих?", o:["По категории (характеру выполняемых функций)","По полу","По стажу работы","По уровню зарплаты"], c:0, e:"Это классификация кадров по категориям — основной способ структурировать персонал предприятия."},
+        {q:"Баланс рабочего времени одного работающего нужен, чтобы:", o:["Рассчитать реальный (эффективный) фонд времени одного сотрудника за период","Определить курс валют","Рассчитать амортизацию оборудования","Определить себестоимость продукции"], c:0, e:"Баланс рабочего времени учитывает календарный фонд минус выходные, отпуска, болезни и т.д. — получается реальное время, которое сотрудник отработает."}
+      ]},
+      { id:"e5", name:"Оплата труда", questions:[
+        {q:"При сдельной оплате труда зарплата зависит от:", o:["Отработанного времени","Количества произведённой продукции","Стажа работника","Только от оклада"], c:1, e:"Сдельная система платит за результат — количество сделанного, а не за часы."},
+        {q:"Аккордная система оплаты — это:", o:["Оплата за весь объём работы целиком (например, за сдачу объекта под ключ)","Оплата строго по часам","Оплата только премией без оклада","Оплата, применяемая исключительно к руководителям"], c:0, e:"Классический пример — ремонтная бригада, которой платят «за квартиру под ключ»."},
+        {q:"Тарифный коэффициент показывает:", o:["Во сколько раз ставка данного разряда больше ставки первого разряда","Абсолютную сумму зарплаты в рублях","Процент премии","Долю налогов в зарплате"], c:0, e:"1-й разряд = коэффициент 1,0, дальше коэффициенты растут по тарифной сетке."},
+        {q:"Повременная оплата труда чаще применяется там, где:", o:["Легко точно измерить количество продукции одного работника","Важнее качество/присутствие, а результат сложно измерить количественно","Работник трудится только сдельно","Нет норм времени вообще"], c:1, e:"Пример — охрана, руководители, специалисты: результат их работы трудно посчитать поштучно."},
+        {q:"Чтобы премия реально работала как стимул, она обычно должна быть не меньше:", o:["1% от оклада","10% от оклада","50% от оклада","Размера самого оклада"], c:1, e:"Это так называемый порог чувствительности премии — меньше 10% обычно не воспринимается как стимул."},
+        {q:"Коэффициент соотношения (КСЗП) показывает отношение:", o:["Прироста зарплаты к приросту производительности труда","Прибыли к выручке","Себестоимости к цене","Оборотных средств к основным"], c:0, e:"КСЗП = прирост зарплаты (%) / прирост производительности труда (%). В норме он должен быть меньше 1 — зарплата растёт медленнее производительности."},
+        {q:"Почему премия не должна носить регулярный характер?", o:["Чтобы сохранялся эффект новизны и стимулирующая роль","Чтобы снизить налоги","Потому что премии запрещены законом","Чтобы не превышать фонд зарплаты"], c:0, e:"Если премия выплачивается всегда одинаково, она превращается в обычную прибавку к окладу и перестаёт стимулировать."},
+        {q:"Источниками выплаты премий на предприятии являются:", o:["Только фонд заработной платы","Фонд заработной платы и прибыль","Только амортизационный фонд","Только кредитные средства"], c:1, e:"Премии могут начисляться и из ФЗП, и из прибыли, остающейся в распоряжении организации."}
+      ]},
+      { id:"e6", name:"Себестоимость", questions:[
+        {q:"Прямые затраты — это те, что:", o:["Легко и однозначно относятся на конкретный продукт","Распределяются пропорционально между всеми видами продукции","Не входят в себестоимость","Всегда постоянны"], c:0, e:"Косвенные, наоборот, нужно «размазывать» между несколькими видами продукции по какой-то базе."},
+        {q:"Постоянные затраты на ЕДИНИЦУ продукции при росте объёма производства:", o:["Растут","Не меняются","Уменьшаются","Всегда равны нулю"], c:2, e:"Постоянные затраты (аренда, оклады) «размазываются» на больший объём — на штуку выходит меньше."},
+        {q:"Полная себестоимость отличается от производственной тем, что включает дополнительно:", o:["Расходы на реализацию (сбыт)","Материальные затраты","Амортизацию","Зарплату рабочих"], c:0, e:"Полная = производственная + расходы на реализацию продукции."},
+        {q:"Классификация затрат «по экономическим элементам» нужна, чтобы понять:", o:["Себестоимость конкретного изделия","Куда вообще уходят деньги компании в целом","Норму амортизации","Курс валют"], c:1, e:"Элементы показывают структуру затрат всей компании: материалоёмкое производство или трудоёмкое."},
+        {q:"Показатель затрат на рубль товарной продукции, равный 0,85, означает:", o:["На рубль выручки уходит 85 копеек затрат","Прибыль составляет 85% от выручки","Себестоимость превышает выручку","Все затраты являются переменными"], c:0, e:"Остальные 15 копеек — потенциальная прибыль (до налогов) с каждого рубля выручки."},
+        {q:"Какой из трёх уровней себестоимости самый полный (учитывает больше всего расходов)?", o:["Цеховая","Производственная","Полная","Все три уровня одинаковы"], c:2, e:"Цеховая — только расходы цеха; производственная — плюс общехозяйственные расходы завода; полная — плюс ещё и расходы на реализацию/сбыт."},
+        {q:"В чём разница между классификацией затрат «по экономическим элементам» и «по статьям калькуляции»?", o:["Элементы показывают, что потратили (материалы, зарплата и т.д.) в целом по предприятию, статьи — на какой продукт эти затраты пошли","Это полностью одно и то же","Статьи калькуляции применяются только к основным средствам","Элементы применяются только для налоговой отчётности"], c:0, e:"Экономические элементы — «что потрачено» в целом (сырьё, зарплата, амортизация), статьи калькуляции — «на что» и «на какой продукт» пошли эти затраты."},
+        {q:"Косвенные расходы распределяют между видами продукции:", o:["Поровну независимо от объёма","Пропорционально выбранной базе распределения (например, зарплате основных рабочих)","Их вообще не распределяют","Только по себестоимости прошлого года"], c:1, e:"Так как косвенные расходы нельзя прямо отнести на конкретный продукт, их «размазывают» пропорционально базе — часто зарплате или прямым затратам."}
+      ]},
+      { id:"e7", name:"Прибыль", questions:[
+        {q:"Валовая прибыль рассчитывается как:", o:["Выручка минус себестоимость реализованной продукции","Выручка минус налоги","Себестоимость минус амортизация","Чистая прибыль плюс налоги на имущество"], c:0, e:"Это первый и самый «верхний» уровень прибыли в цепочке до чистой прибыли."},
+        {q:"Товарная продукция — это:", o:["Всё произведённое, включая незавершёнку","Полностью готовая и упакованная для отправки продукция","То, что уже оплачено клиентом","Только экспортная продукция"], c:1, e:"Валовая продукция включает незавершёнку, товарная — только полностью готовое."},
+        {q:"Добавленная стоимость компании считается как:", o:["Товарная продукция минус материальные затраты","Выручка минус налоги","Прибыль минус амортизация","Себестоимость плюс прибыль"], c:0, e:"Это собственный вклад компании, без учёта того, что она просто «прогнала» через себя чужое сырьё."},
+        {q:"Чистая прибыль — это:", o:["Прибыль до налогообложения за вычетом налога на прибыль и прочих налогов","То же самое, что валовая прибыль","Выручка без вычетов","Прибыль от инвестиционной деятельности"], c:0, e:"Чистая прибыль — самый последний остаток в цепочке, то, что реально можно направить на дивиденды/развитие."},
+        {q:"Производственная программа предприятия — это:", o:["План объёма и ассортимента продукции, который предприятие должно произвести за период","Только план по зарплате","Список поставщиков сырья","Отчёт о прибыли за прошлый год"], c:0, e:"Производственная программа задаёт, сколько и какой продукции нужно выпустить — от неё зависят дальнейшие расчёты себестоимости и прибыли."},
+        {q:"Одна из основных функций прибыли — это:", o:["Стимулирующая (источник вознаграждения работников и развития организации)","Функция уплаты только НДС","Функция определения курса валют","Функция расчёта амортизации"], c:0, e:"Прибыль не только показатель результата, но и источник премий, инвестиций и развития организации."}
+      ]},
+      { id:"e8", name:"Экономическая эффективность", questions:[
+        {q:"«Золотое правило экономики предприятия» требует, чтобы:", o:["Темп роста прибыли был выше темпа роста выручки, а тот — выше темпа роста активов","Все три показателя росли одинаково","Активы росли быстрее всего","Прибыль всегда была отрицательной"], c:0, e:"100% < темп роста активов < темп роста выручки < темп роста прибыли — признак растущей эффективности."},
+        {q:"Рентабельность продаж показывает:", o:["Прибыль на рубль выручки","Прибыль на рубль капитала","Долю переменных затрат","Скорость оборота запасов"], c:0, e:"Р(продаж) = прибыль от реализации / выручка."},
+        {q:"Высокая оборачиваемость при низкой марже (супермаркет) и низкая оборачиваемость при высокой марже (ювелирный бутик) могут давать:", o:["Совершенно несравнимые результаты","Одинаковую рентабельность капитала","Только отрицательную рентабельность","Одинаковую себестоимость"], c:1, e:"Рентабельность капитала = оборачиваемость × рентабельность продаж — два разных пути к одному итогу."},
+        {q:"Рентабельность продукции (в отличие от рентабельности продаж) считается как:", o:["Прибыль от реализации / себестоимость продукции","Прибыль от реализации / выручка","Прибыль / стоимость капитала","Выручка / себестоимость"], c:0, e:"Рентабельность продукции показывает отдачу именно от затрат на производство, а не от выручки."},
+        {q:"Рост производительности труда, опережающий рост зарплаты, говорит о:", o:["Снижении экономической эффективности","Росте экономической эффективности деятельности организации","Отсутствии связи с эффективностью","Обязательном снижении прибыли"], c:1, e:"Это частный случай «золотого правила» — эффективность растёт, когда отдача обгоняет затраты на неё."}
+      ]},
+      { id:"e9", name:"Инвестиции", questions:[
+        {q:"Главная идея дисконтирования:", o:["Деньги сегодня стоят больше, чем та же сумма в будущем","Деньги в будущем всегда стоят больше, чем сегодня","Инфляция не влияет на стоимость денег","Дисконтирование нужно только для кредитов"], c:0, e:"Сегодняшние деньги можно вложить и получить процент — поэтому их «сегодняшняя ценность» выше."},
+        {q:"Если ЧДД (NPV) проекта больше нуля, это значит:", o:["Проект убыточен","Проект выгоден","Проект просто окупается без выгоды","Проект невозможно оценить"], c:1, e:"ЧДД > 0 — доходы с учётом дисконтирования превышают инвестиции, проект имеет смысл."},
+        {q:"Внутренняя норма доходности (ВНД/IRR) — это ставка, при которой:", o:["ЧДД равен нулю","Прибыль максимальна","Инвестиции равны нулю","Себестоимость минимальна"], c:0, e:"ВНД — это как «максимальный процент по кредиту», который проект способен выдержать без убытка."},
+        {q:"Реальные инвестиции — это:", o:["Покупка акций и облигаций","Покупка станков, зданий, физических активов","Только бюджетные вложения","Вложения только в нематериальные активы"], c:1, e:"Акции и облигации — это финансовые (портфельные) инвестиции, а не реальные."},
+        {q:"Источники финансирования инвестиций делятся на:", o:["Только государственные","Собственные (прибыль, амортизация) и заёмные (кредиты, займы)","Только валютные","Только иностранные"], c:1, e:"Компания может вкладывать свои деньги (прибыль, амортизационный фонд) или привлекать заёмные средства."},
+        {q:"Срок окупаемости инвестиций показывает:", o:["За какое время вложенные средства вернутся за счёт доходов от проекта","Ставку дисконтирования","Общий объём инвестиций","Размер чистой прибыли"], c:0, e:"Чем короче срок окупаемости, тем быстрее инвестор возвращает вложенные деньги."}
+      ]}
+    ]
+  },
+  it: {
+    name: "Информационные технологии",
+    code: "ИНФО",
+    accent: "it",
+    desc: "4 блока: основы и тренды ИТ, MS Office, сети и интернет, программное обеспечение.",
+    topics: [
+      { id:"i1", name:"Основы ИТ и тренды", questions:[
+        {q:"Из чего состоит любая информационная технология?", o:["Только из программного обеспечения","Из технических средств, программных средств и организационно-методического обеспечения","Только из компьютеров","Только из интернета"], c:1, e:"Даже самый дорогой софт не заработает без правильного «железа» и правил его использования."},
+        {q:"Какая тенденция развития ИТ описывает заказ билета напрямую у авиакомпании без турагентства?", o:["Глобализация","Конвергенция","Ликвидация промежуточных звеньев (посредников)","Усложнение информационных продуктов"], c:2, e:"Посредники становятся не нужны, если можно получить услугу напрямую через ИТ."},
+        {q:"Смартфон, объединяющий телефон, камеру, навигатор и плеер — пример:", o:["Конвергенции","Глобализации","Ликвидации посредников","Способности к взаимодействию"], c:0, e:"Конвергенция — слияние разнородных технологий в одном устройстве/продукте."},
+        {q:"Беременные и кормящие женщины по нормам охраны труда при работе на ПК:", o:["Допускаются на общих основаниях","Не допускаются к работе на ПК","Допускаются только в ночную смену","Допускаются только с разрешения врача на полный день"], c:1, e:"Это прямое требование норм охраны труда для работы на ПК."},
+        {q:"Роль ИТ в современной экономике сместилась от:", o:["Инструмента конкурентоспособности к простому удобству","Средства личной продуктивности к фактору конкурентоспособности всей компании","Не изменилась вообще","Полностью заменена ролью государства"], c:1, e:"Раньше ИТ повышали продуктивность одного сотрудника, сейчас — определяют конкурентоспособность бизнеса в целом."},
+        {q:"Минимальная группа по электробезопасности для допуска к работе на ПК:", o:["Не ниже первой","Не ниже пятой","Группа не требуется","Только высшая категория"], c:0, e:"По нормам охраны труда достаточно первой группы по электробезопасности."},
+        {q:"Какие опасные факторы могут воздействовать на человека при работе за ПК?", o:["Только шум от вентилятора","Электромагнитные и ионизирующие излучения, статическое электричество, перенапряжение зрительного анализатора и др.","Только температура в помещении","ПК не создаёт опасных факторов"], c:1, e:"В нормах охраны труда перечислен целый список факторов — от излучений до умственного и зрительного перенапряжения."},
+        {q:"Сколько основных тенденций развития информационных технологий обычно выделяют?", o:["3","5","10","2"], c:1, e:"Пять: усложнение продуктов, способность к взаимодействию, ликвидация посредников, глобализация, конвергенция."}
+      ]},
+      { id:"i2", name:"MS Office", questions:[
+        {q:"Какое приложение MS Office предназначено для управления базами данных?", o:["Word","Excel","Access","PowerPoint"], c:2, e:"Access — система управления базами данных (СУБД) из пакета Office."},
+        {q:"В Excel адрес $B$1 является:", o:["Относительным","Абсолютным","Смешанным по строке","Смешанным по столбцу"], c:1, e:"Знак $ перед буквой и цифрой закрепляет и столбец, и строку — адрес не меняется при копировании формулы."},
+        {q:"Чтобы в Word автоматически собралось оглавление, заголовки в тексте нужно:", o:["Просто сделать жирным шрифтом вручную","Пометить специальными стилями заголовков","Увеличить размер шрифта","Вставить как картинку"], c:1, e:"Без применения стилей «Заголовок 1/2» автоматическое оглавление не соберётся — частая ошибка при оформлении работ."},
+        {q:"Какой тип диаграммы в Excel лучше всего показывает изменение данных во времени?", o:["Круговая","График","Точечная","Любая одинаково хорошо"], c:1, e:"График показывает тенденции изменения данных за равные промежутки времени."},
+        {q:"В Access объект «форма» предназначен в первую очередь для:", o:["Хранения самих данных","Удобного ввода и просмотра данных","Печати готового документа","Выборки данных по условию"], c:1, e:"Таблица хранит данные, форма — удобный «экран» для их ввода, запрос — выборка, отчёт — печать."},
+        {q:"Если вставить таблицу Excel в презентацию через связывание, то при изменении исходного файла Excel:", o:["Презентация обновится автоматически","Презентация останется без изменений","Связь разорвётся сразу","Таблица удалится из презентации"], c:0, e:"Связывание держит вставленные данные «привязанными» к исходному файлу — в отличие от обычной вставки/внедрения."},
+        {q:"В PowerPoint поле «заметки» предназначено для:", o:["Текста, который видят зрители на экране","Подсказок докладчику, невидимых для аудитории на экране","Названия презентации","Списка иллюстраций"], c:1, e:"Заметки видит только докладчик в режиме докладчика — зрители на экране их не видят."},
+        {q:"При создании многостраничного документа в Word структура и оглавление формируются:", o:["До набора текста, самым первым шагом","После набора текста, после того как заголовки помечены стилями","После печати документа","Формирование оглавления вообще не связано с текстом документа"], c:1, e:"Сначала набирается и вычитывается текст, затем размечаются страницы, и только потом заголовки помечаются стилями для сборки оглавления."}
+      ]},
+      { id:"i3", name:"Сети и Интернет", questions:[
+        {q:"Сеть, где все компьютеры равны и могут выступать и клиентом, и «сервером», называется:", o:["Клиент-серверной","Одноранговой","Глобальной","Ведомственной"], c:1, e:"В одноранговой сети нет выделенных серверов — все узлы равноправны."},
+        {q:"Устройство, соединяющее сети с разными протоколами/ПО, называется:", o:["Хаб","Коммутатор","Шлюз","Модем"], c:2, e:"Шлюз — «переводчик» между разнородными сетями, в отличие от роутера, который соединяет однотипные сети."},
+        {q:"Всемирная паутина (WWW) — это:", o:["То же самое, что весь Интернет","Один из сервисов Интернета, реализующий гипертекстовые документы","Протокол электронной почты","Название браузера"], c:1, e:"Интернет — вся инфраструктура сети, WWW — лишь один из сервисов поверх неё, наравне с почтой и др."},
+        {q:"Автор концепции Всемирной паутины:", o:["Билл Гейтс","Тим Бернерс-Ли","Стив Джобс","Марк Цукерберг"], c:1, e:"Британский учёный Тим Бернерс-Ли предложил WWW в 1989 году."},
+        {q:"Программы-«пауки» (спайдеры), автоматически обходящие веб-страницы, используются для:", o:["Индексации страниц поисковыми системами","Защиты от вирусов","Печати документов","Начисления амортизации"], c:0, e:"Так поисковики вроде Google и Яндекс автоматически собирают свою базу для поиска."},
+        {q:"Роутер (маршрутизатор) в первую очередь предназначен для:", o:["Соединения разных сетей между собой (например, домашней сети с интернетом)","Хранения файлов","Печати документов","Начисления IP-адресов вручную"], c:0, e:"Роутер связывает сети — самый частый пример: домашняя сеть ↔ интернет провайдера."},
+        {q:"Интернет вырос из сети:", o:["ARPANET (1969 год)","WWW (1989 год)","Ethernet (1980 год)","GSM (1991 год)"], c:0, e:"ARPANET (1969) изначально соединяла всего 4 удалённых компьютера — от неё и выросла современная сеть сетей."},
+        {q:"По принадлежности компьютерные сети делятся на:", o:["Только локальные и глобальные","Государственные, ведомственные и корпоративные","Только проводные и беспроводные","Только одноранговые и серверные"], c:1, e:"Это отдельный признак классификации — «чья» сеть, независимо от её территории или скорости."},
+        {q:"Формирование списка ключевых слов для эффективного поиска в интернете предполагает предварительное составление:", o:["Тезауруса (словаря терминов по теме)","Только списка сайтов","Расписания поиска","Списка провайдеров"], c:0, e:"Тезаурус помогает подобрать точные и синонимичные ключевые слова, повышая релевантность поиска."},
+        {q:"Общение с отсрочкой получения сообщения (не в реальном времени) — это, например:", o:["Чат","Электронная почта","Видеозвонок","IP-телефония"], c:1, e:"В отличие от чата, письмо по e-mail не требует, чтобы собеседник был онлайн прямо сейчас."}
+      ]},
+      { id:"i4", name:"ПО и электронные библиотеки", questions:[
+        {q:"К какому уровню ПО относится ядро операционной системы?", o:["Базовое ПО","Системное ПО","Служебное ПО","Инструментальное ПО"], c:1, e:"Ядро ОС — программы системного уровня, обеспечивающие работу всех остальных программ."},
+        {q:"Компиляторы и среды разработки (например, Delphi) относятся к:", o:["Прикладному ПО","Инструментальному ПО","Базовому ПО","Служебному ПО"], c:1, e:"Инструментальное ПО служит для СОЗДАНИЯ других программ — уровень для программистов."},
+        {q:"Архиваторы и антивирусы относятся к:", o:["Базовому ПО","Служебному (сервисному) ПО","Инструментальному ПО","Прикладному ПО"], c:1, e:"Служебные программы обслуживают и «чинят» систему, но сами задачи пользователя не решают."},
+        {q:"В MathCAD математические формулы отображаются:", o:["В виде текстовых команд как в языках программирования","В привычном математическом виде, как в учебнике","Только в виде таблиц","Только на английском языке"], c:1, e:"Это ключевая особенность MathCAD — документ выглядит как страница из учебника с формулами."},
+        {q:"Электронная библиотека, которая собирает уже существующие чужие издания под одной «крышей», называется:", o:["Генерируемая","Агрегируемая","Смешанная","Монодокументная"], c:1, e:"Генерируемая — создаётся самим держателем фонда, агрегируемая — собирается из чужих источников."},
+        {q:"Уровень ПО, который отвечает за первое включение компьютера и хранится в ПЗУ:", o:["Базовое ПО","Прикладное ПО","Инструментальное ПО","Служебное ПО"], c:0, e:"Базовое ПО — самый нижний уровень, «зашито» в микросхемы постоянного запоминающего устройства."}
+      ]},
+      { id:"i5", name:"Браузеры и почтовые клиенты", questions:[
+        {q:"Какая компания разрабатывает браузер Google Chrome?", o:["Microsoft","Google","Mozilla Corporation","Opera Software"], c:1, e:"Chrome создан Google на основе движка Chromium."},
+        {q:"Mozilla Firefox распространяется как:", o:["Платный браузер только по подписке","Свободно распространяемый браузер","Только встроенный в Windows","Только для мобильных устройств"], c:1, e:"Firefox — часть набора программ Mozilla Application Suite, распространяется свободно."},
+        {q:"К главным характеристикам браузера обычно относят:", o:["Производительность, надёжность и функциональность","Только цвет интерфейса","Только количество вкладок","Только поддержку игр"], c:0, e:"Это три ключевых критерия оценки любого браузера, независимо от личных вкусов пользователя."},
+        {q:"Какой почтовый клиент известен прежде всего защитой переписки от мониторинга третьими лицами?", o:["Mailbird","The Bat!","TouchMail","Claws Mail"], c:1, e:"The Bat! делает акцент именно на безопасности и защите переписки."},
+        {q:"Почтовый клиент, оптимизированный под сенсорные экраны планшетов и ноутбуков-трансформеров:", o:["TouchMail","Outlook","Claws Mail","eM Client"], c:0, e:"Название говорит само за себя — TouchMail создан под touch-интерфейсы."},
+        {q:"Какой почтовый клиент подходит скорее опытным пользователям, готовым настраивать всё вручную (без мастера импорта)?", o:["eM Client","Claws Mail","Mailbird","Outlook"], c:1, e:"Claws Mail позволяет импортировать неограниченное число аккаунтов, но без автоматического мастера — вручную."}
+      ]}
+    ]
+  }
+};
+
+/* ============ CONSPECTS (читать простым языком) ============ */
+const CONSPECTS = {
+
+  e1: `
+    <p><b>В экономике есть три типа игроков:</b> домохозяйства (мы с вами — продаём труд, покупаем товары), организации (юрлица, которые производят товары/услуги ради прибыли) и государство (устанавливает правила игры: налоги, минимальную зарплату, контроль цен).</p>
+    <p><b>Организация</b> — это самостоятельный субъект (юрлицо), созданный кем-то, чтобы производить продукцию/услуги и получать прибыль. У неё есть своё имущество, и она отвечает по своим долгам этим имуществом.</p>
+    <p>Организации делятся на <b>коммерческие</b> (цель — прибыль) и <b>некоммерческие</b> (цель другая — благотворительность, религия, политика, но подрабатывать коммерцией немного можно, если это помогает уставной цели).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Когда вы открываете, скажем, кофейню — вы регистрируете именно «организацию» в юридическом смысле: с уставом, своим счётом, ответственностью по долгам своим имуществом (или ограниченной — зависит от формы).</div>
+
+    <h4>Организационно-правовые формы — «во что одеться» бизнесу</h4>
+    <p>Это, по сути, выбор юридической «упаковки» для бизнеса.</p>
+    <p><b>Товарищества</b> (сейчас встречаются редко, но в теории спрашивают):</p>
+    <ul>
+      <li><b>Полное товарищество</b> — все участники отвечают по долгам ВСЕМ своим личным имуществом. Рискованно, зато доверия больше.</li>
+      <li><b>Коммандитное</b> — есть «полные товарищи» (отвечают всем имуществом) и «вкладчики» (рискуют только вложенной суммой, в бизнес не лезут).</li>
+    </ul>
+    <p><b>Общества</b> (самое популярное на практике):</p>
+    <ul>
+      <li><b>ООО</b> (общество с ограниченной ответственностью) — участники рискуют только тем, что вложили в уставный фонд. Это самая массовая форма для малого/среднего бизнеса.</li>
+      <li><b>ОДО</b> (доп. ответственность) — как ООО, но если фонда не хватает на долги, участники доплачивают из своего кармана, но не больше заранее оговорённого лимита (в источнике — до суммы, эквивалентной 50 базовым величинам).</li>
+      <li><b>АО</b> (акционерное общество) — капитал поделён на акции.
+        <ul>
+          <li><b>ЗАО (закрытое)</b> — акции распределяются только среди «своих», на биржу не выходят.</li>
+          <li><b>ОАО (открытое)</b> — акции продаются всем желающим на бирже. Так работают крупные публичные компании.</li>
+        </ul>
+      </li>
+    </ul>
+    <p><b>Производственный кооператив</b> — люди объединяются, вносят имущественный вклад И лично трудятся (в отличие от ООО, где можно быть просто инвестором). Минимум 3 человека. Прибыль делят по трудовому участию, а не по размеру вклада.</p>
+    <p><b>Унитарное предприятие</b> — у него нет «долевых» собственников: всё имущество принадлежит одному лицу (государству, региону или частному владельцу) и неделимо. Работники не могут получить долю.</p>
+    <p><b>Минимальный уставный фонд</b> (по учебнику): ЗАО — 100 базовых величин, ОАО — 400 базовых величин. Это исторические цифры на момент написания конспекта — на реальном экзамене и в жизни лучше сверяться с актуальным законодательством, но сам принцип (у открытого общества фонд больше) обычно спрашивают именно как принцип.</p>
+    <p><b>Малый бизнес</b>: микроорганизации — до 15 человек, малые — 16–100 человек.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>90% малого бизнеса в реальности — это ООО (гибкость + ограниченная ответственность) либо ИП. Полные товарищества сегодня — почти музейный экспонат, но в тестах их любят спрашивать именно чтобы проверить понимание разницы в ответственности.</div>
+
+    <h4>Как создаётся организация</h4>
+    <p>Упрощённо, шаги такие:</p>
+    <ul>
+      <li>Составить учредительные документы (устав и/или учредительный договор) — там прописано название, цели, учредители, размер уставного фонда, права/обязанности.</li>
+      <li>Подать документы на госрегистрацию (заявление, устав, документ об уплате пошлины).</li>
+      <li>Получить запись в едином госреестре — с этого момента организация официально существует.</li>
+      <li>Без регистрации вести бизнес нельзя — это незаконная деятельность.</li>
+    </ul>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Сегодня во многих странах регистрация ООО через «единое окно» занимает 1 рабочий день — это упрощённый заявительный принцип.</div>
+  `,
+
+  e2: `
+    <p><b>Основные средства (ОС)</b> — это то, что организация использует ДОЛГО (больше 12 месяцев), что не «исчезает» за один цикл производства, а постепенно снашивается: здания, станки, транспорт, оборудование, инструмент и т.д.</p>
+    <p>Ключевое отличие от оборотных средств: ОС сохраняют свою форму годами и переносят стоимость на продукцию <b>по частям</b> (через амортизацию), а не сразу.</p>
+    <p>Основные группы по роли в производстве: здания, сооружения (мосты, скважины), передаточные устройства (провода, трубы), машины и оборудование, транспортные средства, инструмент, инвентарь.</p>
+    <p><b>Активная часть</b> — то, что непосредственно участвует в превращении сырья в продукцию (станки, машины). <b>Пассивная</b> — создаёт условия (здания, склады). Чем выше доля активной части — тем современнее и технологичнее производство.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Если инвестор спрашивает «какая у вас структура основных средств», он на самом деле спрашивает «сколько вы вкладываете в реально работающее оборудование, а не в стены» — высокая доля активной части обычно считается плюсом.</div>
+
+    <h4>Оценка стоимости ОС — 4 вида стоимости</h4>
+    <p><b>1. Первоначальная стоимость (Фп)</b> — сколько заплатили при покупке + доставка + монтаж.</p>
+    <div class="formula">Фп = Цена + Транспортировка + Монтаж + Прочее
+
+Пример: станок купили за 350 тыс, доставка 14,5 тыс, монтаж 5,5 тыс → Фп = 370 тыс.</div>
+    <p><b>2. Восстановительная стоимость (Фв)</b> — сколько стоил бы такой же станок, если бы его покупали СЕЙЧАС, по сегодняшним ценам. Нужна, потому что старое оборудование числится по ценам покупки, а цены со временем меняются.</p>
+    <p><b>3. Остаточная стоимость (Ф₀)</b> — первоначальная (или восстановительная) минус уже накопленный износ. Это «сколько ещё осталось» стоимости в станке.</p>
+    <p><b>4. Ликвидационная стоимость (Фл)</b> — сколько выручим, если продадим станок в конце срока службы.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Когда вы видите в балансе компании строку «основные средства — 5 млн», это, как правило, остаточная стоимость. А когда банк оценивает залог — часто использует ликвидационную стоимость.</div>
+
+    <h4>Износ: физический и моральный</h4>
+    <ul>
+      <li><b>Физический износ</b> — станок реально снашивается от использования и времени.</li>
+      <li><b>Моральный износ</b> — станок физически ещё в порядке, но экономически невыгоден: 1-го рода (такие же станки подешевели), 2-го рода (появились новые, более производительные).</li>
+    </ul>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Классический пример морального износа 2-го рода — компьютер пятилетней давности: физически работает, но новые программы тормозят, и держать сотрудника на таком ПК дороже, чем купить новый.</div>
+
+    <h4>Амортизация</h4>
+    <p><b>Амортизация</b> — способ понемногу «списывать» стоимость станка в затраты, вместо того чтобы сразу списать всю сумму в момент покупки.</p>
+    <div class="formula">Амортизируемая стоимость = Первоначальная стоимость − Ликвидационная стоимость</div>
+    <p>Три способа начислять амортизацию:</p>
+    <ul>
+      <li><b>Линейный</b> — самый простой: делим стоимость равными долями на весь срок службы.
+        <div class="formula">Годовая сумма = Амортизируемая стоимость × Норма амортизации (%) / 100</div>
+      </li>
+      <li><b>Нелинейный (ускоренный)</b> — в первые годы списывают БОЛЬШЕ, а к концу срока — меньше. Логика: новый станок работает эффективнее в начале, плюс так можно быстрее «отбить» вложения.</li>
+      <li><b>Производительный способ</b> — амортизация зависит не от времени, а от того, сколько РЕАЛЬНО произвели продукции относительно всего запланированного объёма выпуска за срок службы.</li>
+    </ul>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Ускоренная амортизация — фактически легальный способ временно уменьшить налог на прибыль (больше амортизации → больше «бумажных» затрат → меньше прибыль на бумаге → меньше налог), поэтому государство часто поощряет её для обновления оборудования.</div>
+
+    <h4>Показатели эффективности использования ОС</h4>
+    <div class="formula">Фондоотдача = Товарная продукция / Среднегодовая стоимость ОС
+Фондовооружённость = Стоимость ОС / Численность работников
+Кэкс (экстенсивность) = Фактически отработанное время / Режимный фонд времени
+Кинт (интенсивность) = Фактический выпуск / Максимально возможный выпуск</div>
+    <p><b>Фондоотдача</b> — сколько продукции «выжали» из каждого рубля, вложенного в оборудование; чем выше, тем лучше. <b>Фондоёмкость</b> — обратный показатель, чем ниже — тем лучше. <b>Фондовооружённость</b> должна расти — иначе труд не автоматизируется.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Если станок простаивает половину смены (низкая экстенсивность) — проблема в организации труда/поставках. Если станок работает всю смену, но производит вполсилы (низкая интенсивность) — проблема в самом оборудовании. Это два РАЗНЫХ диагноза, и решения разные (первое лечится логистикой, второе — модернизацией).</div>
+  `,
+
+  e3: `
+    <p><b>Оборотные средства</b> — это то, что расходуется ПОЛНОСТЬЮ за один производственный цикл и меняет свою форму: сырьё → незавершёнка → готовая продукция → деньги от продажи → снова сырьё.</p>
+    <p>Ключевая разница с основными средствами: оборотные меняют форму каждый цикл и переносят стоимость сразу и целиком, а не по частям через амортизацию.</p>
+    <p>Кругооборот: <b>Деньги → Запасы → Незавершённое производство → Готовая продукция → Деньги (плюс прибыль)</b>.</p>
+    <p>Состав: производственные запасы (сырьё, материалы), незавершённое производство, готовая продукция на складе, товары отгруженные, дебиторская задолженность, денежные средства.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Для владельца бизнеса именно оборотные средства — вечная головная боль: деньги «заморожены» то в сырье на складе, то в товаре у клиента, который ещё не заплатил.</div>
+
+    <h4>Нормирование оборотных средств</h4>
+    <p>Цель — не занизить (тогда перебои в производстве) и не завысить (тогда деньги лежат мёртвым грузом).</p>
+    <div class="formula">Текущий запас (дни) = Интервал между поставками / 2
+Норматив оборотных средств = Однодневный расход × Общая норма запаса (дни)</div>
+    <p>Норма запаса складывается из транспортного, подготовительного, текущего (самый большой) и страхового (обычно 50% от текущего) запасов.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Этим занимаются логисты и финансисты вместе — например, при выборе «заказывать сырьё раз в неделю большими партиями или раз в 2 дня маленькими» напрямую считают, как это повлияет на замороженные в запасах деньги.</div>
+
+    <h4>Показатели оборачиваемости — самое важное в теме</h4>
+    <div class="formula">Коб (коэффициент оборачиваемости) = Выручка за год / Среднегодовой остаток оборотных средств
+Доб (длительность оборота, дни) = Дней в периоде (обычно 360) / Коб
+Кз (коэффициент загрузки) = Оборотные средства / Выручка
+
+Пример: остаток 1500 тыс, выручка 15000 тыс.
+Коб = 15000/1500 = 10 оборотов в год
+Доб = 360/10 = 36 дней
+Кз = 1500/15000 = 0,10</div>
+    <p>Ускорение оборачиваемости даёт реальную экономию денег: если сократить длительность оборота на 12 дней при тех же 50 млн выручки в год — компания высвобождает 1,67 млн рублей, которые раньше «сидели» в запасах.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Это ровно тот показатель, который считают финансовые директора, когда решают, стоит ли давать клиентам отсрочку платежа на 60 дней вместо 30 — более долгая отсрочка = медленнее оборачиваемость = больше денег нужно «заморозить» в бизнесе.</div>
+
+    <h4>Как ускорить оборачиваемость</h4>
+    <ul>
+      <li>На стадии запасов — не завозить больше, чем нужно; работать с надёжными поставщиками.</li>
+      <li>На стадии производства — сокращать производственный цикл, меньше брака и простоев.</li>
+      <li>На стадии сбыта — быстрее находить покупателей, не копить готовую продукцию на складе.</li>
+    </ul>
+  `,
+
+  e4: `
+    <p>Персонал делится на: <b>рабочих</b> (основные — делают продукцию, вспомогательные — обслуживают) и <b>служащих</b> (руководители, специалисты, технические исполнители).</p>
+    <p>Отличие понятий: <b>профессия</b> — широкая область («экономист»), <b>специальность</b> — узкая («экономист-бухгалтер»), <b>квалификация</b> — уровень мастерства, подтверждается дипломом/разрядом.</p>
+
+    <h4>Сколько людей нужно нанять</h4>
+    <div class="formula">По трудоёмкости:
+Численность = Общая трудоёмкость (нормо-часы) / (Годовой фонд времени × Коэфф. выполнения норм)
+
+Пример: трудоёмкость 240 000 нормо-часов, фонд времени 1750 часов, нормы выполняются на 120%
+→ 240000 / (1750 × 1,2) ≈ 114 человек
+
+По нормам выработки:
+Численность = Объём выпуска / (Норма выработки × Коэфф. выполнения норм)</div>
+    <p>Есть ещё расчёт по рабочим местам и нормам обслуживания — для автоматизированных производств.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Выбор метода — не абстрактная теория. На конвейере со штучными операциями считают по трудоёмкости. На автоматической линии, где один оператор следит за 5 станками, считают по нормам обслуживания.</div>
+
+    <h4>Баланс рабочего времени</h4>
+    <div class="formula">Календарный фонд (365 дней)
+  − выходные и праздники
+  = Номинальный фонд рабочего времени
+  − отпуска, больничные
+  = Явочное время
+  × продолжительность смены
+  = Полезный (эффективный) фонд времени одного работника в год</div>
+    <div class="practice-box"><strong>Как это работает на практике</strong>HR и финансисты используют эту цифру (условно ~1970 часов в год), чтобы понять реальную стоимость часа сотрудника и спланировать штат.</div>
+
+    <h4>Производительность труда — 3 метода измерения</h4>
+    <div class="formula">Натуральный: В = Объём продукции / Численность работников
+Трудовой: Производительность = Объём работы в нормо-часах / Фактически отработанное время
+Стоимостный: В = Стоимость произведённой продукции / Численность работников</div>
+    <p><b>Натуральный</b> — наглядно, но только для однородной продукции. <b>Трудовой</b> — подходит для разных видов работ, но нужны нормативы. <b>Стоимостный</b> — самый универсальный, позволяет сравнивать РАЗНЫЕ профессии (повара и токаря), но искажается ценами/инфляцией.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Именно стоимостный метод чаще всего используют для реальных KPI компаний (выручка на сотрудника), потому что только он позволяет сравнивать разнородные подразделения между собой.</div>
+
+    <h4>Планирование роста производительности</h4>
+    <p><b>Принцип опережения:</b> рост производительности труда должен ОПЕРЕЖАТЬ рост зарплаты. Иначе компания просто «проедает» прибыль на зарплаты, ничего реально не производя больше.</p>
+  `,
+
+  e5: `
+    <p>Государство регулирует нижнюю границу (минимальная зарплата), а организации сами определяют размеры зарплат сверх этого минимума. Оплата дифференцируется по сложности/условиям труда.</p>
+    <div class="formula">КСЗП (коэфф. соотношения) = Прирост зарплаты (%) / Прирост производительности труда (%)</div>
+    <p>В идеале КСЗП меньше 1 — зарплата растёт медленнее производительности труда.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Если в компании зарплаты растут быстрее реальной выработки на сотрудника — это тревожный сигнал: либо съедается прибыль, либо цены придётся поднимать, разгоняя инфляцию.</div>
+
+    <h4>Тарифная система</h4>
+    <p><b>Тарифная сетка</b> — таблица разрядов и коэффициентов. 1-й разряд = коэффициент 1,0, дальше коэффициенты растут (например, 27-й разряд — коэффициент 7,84).</p>
+    <div class="formula">ЧТС(i) = ЧТС(1-й разряд) × Тарифный коэффициент(i) / Среднемесячный фонд времени</div>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Это, по сути, «штатное расписание с формулой» — компания один раз устанавливает ставку 1-го разряда, а дальше всё считается по коэффициентам сетки. Многие госорганизации и сейчас работают именно так.</div>
+
+    <h4>Формы и системы оплаты</h4>
+    <p><b>Сдельная</b> (платят за РЕЗУЛЬТАТ): прямая сдельная, сдельно-премиальная, косвенно-сдельная (для вспомогательных рабочих), аккордная (за весь объём работы целиком), сдельно-прогрессивная (сверх нормы — повышенная расценка).</p>
+    <p><b>Повременная</b> (платят за ВРЕМЯ): простая повременная, повременно-премиальная.</p>
+    <p>Сдельная — там, где легко посчитать результат труда одного человека. Повременная — там, где важнее качество/присутствие (руководители, охрана).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Классический пример аккордной системы — ремонтная бригада, которой платят «за квартиру под ключ». Сдельно-прогрессивная часто используется на заводах, чтобы стимулировать перевыполнение плана в пиковые периоды спроса.</div>
+
+    <h4>Премирование</h4>
+    <p>Хорошая система премирования: не выплачивается автоматически всем и всегда, завязана на измеримые показатели, выплачивается вскоре после результата, разная для разных подразделений. Порог чувствительности — около 10% от оклада, меньше обычно не работает как стимул.</p>
+
+    <h4>Планирование фонда зарплаты (ФЗП)</h4>
+    <div class="formula">ФЗП(план) = Плановая выручка × Доля зарплаты в выручке (по факту прошлого года)
+
+Пример: выручка 570 млн, ФЗП 57 млн → доля 10%.
+В плановом году выручка 640 млн → ФЗП(план) = 640 × 0,1 = 64 млн.</div>
+  `,
+
+  e6: `
+    <p><b>Себестоимость</b> — сколько денег ушло на производство и продажу продукции. Разграничим термины: <b>затраты</b> — использование ресурсов вообще, <b>издержки</b> — затраты в деньгах, <b>расходы</b> — затраты, отнесённые к текущему периоду.</p>
+    <p>Виды себестоимости по времени расчёта: плановая, нормативная, фактическая.</p>
+
+    <h4>Классификация затрат</h4>
+    <p><b>По экономическим элементам</b> (что потратили в целом): материальные затраты, оплата труда, отчисления на соцнужды, амортизация, прочие затраты — показывает, куда вообще уходят деньги компании.</p>
+    <p><b>По статьям калькуляции</b> (на что именно, применительно к конкретному изделию) — гораздо детальнее: сырьё, зарплата производственных рабочих, общепроизводственные и общехозяйственные расходы и т.д.</p>
+    <p><b>Три уровня себестоимости:</b> цеховая (только расходы цеха) → производственная (+ общехозяйственные расходы завода) → полная (+ расходы на реализацию).</p>
+    <div class="formula">Полная себестоимость = Производственная себестоимость + Расходы на реализацию</div>
+    <p><b>Прямые</b> затраты легко относятся на конкретный продукт. <b>Косвенные</b> относятся сразу к нескольким видам продукции и «размазываются» пропорционально базе (обычно зарплате рабочих).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Распределение косвенных расходов — вечная головная боль бухгалтеров. Если завод делит их «по зарплате рабочих», простая трудоёмкая продукция может оказаться искусственно «дорогой», а сложная автоматизированная — «дешёвой».</div>
+
+    <h4>Переменные и постоянные затраты</h4>
+    <p><b>Переменные</b> — растут вместе с объёмом (сырьё, сдельная зарплата). <b>Постоянные</b> — не зависят от объёма (аренда, оклады), но на ЕДИНИЦУ продукции при росте объёма — уменьшаются (эффект масштаба).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Именно поэтому большим заводам выгодно загружать мощности по максимуму, а маленьким стартапам тяжело конкурировать по цене с гигантами: у гигантов постоянные затраты «размазаны» на миллионы единиц.</div>
+
+    <h4>Расчёт себестоимости</h4>
+    <div class="formula">УЗ (затраты на рубль товарной продукции) = Полная себестоимость / Стоимость продукции в отпускных ценах
+
+Если УЗ = 0,85 — на рубль выручки уходит 85 копеек затрат, 15 копеек — потенциальная прибыль.
+
+Предельные затраты = Прирост общих затрат / Прирост объёма выпуска</div>
+
+    <h4>Как снижать затраты</h4>
+    <p>Главные рычаги: экономия материалов (обычно ~70% себестоимости), рост производительности труда, лучшая загрузка оборудования.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Большинство реальных программ «снижения издержек» начинаются с работы с поставщиками сырья и загрузки оборудования, а не с урезания зарплат — доля материалов в структуре затрат обычно намного больше доли труда.</div>
+  `,
+
+  e7: `
+    <h4>Производственная программа — виды продукции по стадии готовности</h4>
+    <p><b>Валовая продукция</b> — всё произведённое, включая незавершёнку. <b>Товарная продукция</b> — полностью готовая и упакованная. <b>Реализованная продукция (выручка)</b> — реально проданное.</p>
+    <div class="formula">Добавленная стоимость = Товарная продукция − Материальные затраты</div>
+    <div class="practice-box"><strong>Как это работает на практике</strong>ВВП страны считается как раз через сумму добавленных стоимостей всех компаний — чтобы не считать одно и то же сырьё несколько раз.</div>
+
+    <h4>Что такое прибыль</h4>
+    <p>Прибыль = превышение доходов над затратами. Функции: показатель эффективности, источник финансирования развития, основа для инвестиционных решений, источник премий и дивидендов.</p>
+
+    <h4>Формирование прибыли — от выручки до чистой прибыли</h4>
+    <div class="formula">Валовая прибыль = Выручка − Себестоимость реализованной продукции
+Прибыль от реализации = Валовая прибыль − Управленческие расходы − Расходы на реализацию
+Прибыль по текущей деятельности = Прибыль от реализации + прочие доходы − прочие расходы
+Прибыль до налогообложения = Прибыль по текущей деятельности +/− результат инвест./финанс. деятельности
+Чистая прибыль = Прибыль до налогообложения − налог на прибыль − прочие налоги</div>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Когда говорят «компания прибыльная», важно уточнять КАКАЯ прибыль имеется в виду — валовая может быть большой, а чистая почти нулевой из-за огромных управленческих расходов или процентов по кредитам. Инвесторы смотрят именно на чистую прибыль и прибыль от текущей деятельности.</div>
+  `,
+
+  e8: `
+    <div class="formula">Эффективность = Результат / Затраты</div>
+    <p>Простая идея: чем больше результата на единицу затраченных ресурсов — тем эффективнее работа.</p>
+    <p><b>«Золотое правило экономики предприятия»</b> — идеальное соотношение темпов роста:</p>
+    <div class="formula">100% < Темп роста активов < Темп роста выручки < Темп роста прибыли</div>
+    <p>Компания растёт (капитал > 100%); выручка растёт быстрее капитала — ресурсы используются интенсивнее; прибыль растёт быстрее выручки — рентабельность продаж повышается.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Это чек-лист для финансового аналитика при чтении годового отчёта — если прибыль растёт медленнее выручки, это сигнал, что эффективность бизнеса на самом деле снижается, даже при красивых цифрах выручки.</div>
+
+    <h4>Виды рентабельности</h4>
+    <div class="formula">Рентабельность затрат = Прибыль от реализации / Себестоимость реализованной продукции
+Рентабельность капитала = Прибыль до налогообложения / Среднегодовая стоимость капитала
+Рентабельность продаж = Прибыль от реализации / Выручка
+
+Рентабельность капитала = Оборачиваемость капитала × Рентабельность продаж</div>
+    <p>Заработать хорошую отдачу на капитал можно ДВУМЯ путями: часто «проворачивать» капитал (модель дискаунтера) либо продавать реже, но с высокой маржой (модель ювелирного бутика). Обе стратегии могут давать одинаковую рентабельность капитала.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Нельзя сравнивать рентабельность продаж супермаркета (2–5%) и премиального ювелирного магазина (30–50%) и делать вывод «супермаркет — плохой бизнес». У супермаркета высокая оборачиваемость компенсирует низкую маржу.</div>
+  `,
+
+  e9: `
+    <h4>Виды и источники инвестиций</h4>
+    <p><b>Реальные (прямые)</b> — покупка станков, зданий. <b>Финансовые (портфельные)</b> — акции, облигации. <b>В нематериальные активы</b> — исследования, лицензии, обучение.</p>
+    <p>Источники: внутренние (прибыль, амортизация), внешние (кредиты, деньги инвесторов), бюджетные (государство). По конспекту в мировой практике примерно 55–60% — внешние, 30–35% — внутренние, 5–10% — бюджетные.</p>
+
+    <h4>Дисконтирование — самая важная идея главы</h4>
+    <p><b>Главная мысль: деньги сегодня стоят больше, чем те же деньги через год.</b> Потому что сегодняшние деньги можно вложить и получить процент, плюс есть инфляция и риски.</p>
+    <div class="formula">Кt = 1 / (1 + С)^t,  где С — ставка дисконтирования, t — номер года
+
+Пример: ставка 25%, доход через год 40 млн
+40 / 1,25 = 32 млн — «сегодняшняя ценность» этих денег</div>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Так банки и инвесторы оценивают проект — 100 млн дохода через 5 лет звучит внушительно, но после дисконтирования это может оказаться эквивалентно всего 40–50 млн «сегодняшних» денег.</div>
+
+    <h4>Показатели эффективности инвестиций</h4>
+    <div class="formula">ЧДД (NPV) = Σ(Доход в году t × коэфф. дисконтирования) − Инвестиции
+ЧДД > 0 → проект выгоден; ЧДД < 0 → убыточен; ЧДД = 0 → просто окупается
+
+Пример: вложили 100 млн, доход по 100 млн/год 5 лет, ставка 20%
+Сумма дисконтированных доходов ≈ 299 млн (не 500!)
+ЧДД = 299 − 100 = 199 млн — проект выгоден
+
+Ри (рентабельность инвестиций) = Σ дисконт. доходов / Σ дисконт. инвестиций</div>
+    <p><b>ВНД (IRR)</b> — ставка, при которой ЧДД = 0: «максимальный процент по кредиту», который проект способен выдержать. <b>Срок окупаемости</b> — за сколько лет доходы «отобьют» инвестиции (простой или динамический, с дисконтированием).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>На инвесткомитетах смотрят на ЧДД и ВНД вместе: ЧДД — «сколько денег заработаем», ВНД — «какой запас прочности у проекта». Срок окупаемости важен, когда критична скорость возврата денег (например, у стартапов с ограниченным кэшем).</div>
+  `,
+
+  i1: `
+    <p><b>ИТ</b> — способы и инструменты, с помощью которых собирают, хранят, обрабатывают и выдают информацию с помощью компьютеров и программ.</p>
+    <p>Три составные части любой ИТ: <b>железо</b> (компьютеры, сети), <b>софт</b> (системный и прикладной), <b>организационно-методическое обеспечение</b> (правила и инструкции).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Когда компания внедряет ИТ (например, электронный документооборот) — это никогда не только программа. Это программа + серверы + обученные сотрудники + регламент. Забудете про третий пункт — самый дорогой софт не заработает.</div>
+
+    <h4>Применение ПК в профессиональной деятельности</h4>
+    <p>Компьютеры используются везде: базы данных, расчёты в таблицах, презентации, работа с текстом. Чем шире внедряются компьютеры в отрасль — тем выше требования и тем больше появляется новых видов ИТ.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Это объясняет, почему бухгалтер, дизайнер и инженер используют разный софт на одинаковых по виду компьютерах — под каждую профессию сложился свой стек программ.</div>
+
+    <h4>5 тенденций развития ИТ</h4>
+    <ul>
+      <li><b>Усложнение продукта при упрощении интерфейса.</b> Внутри сложнее, снаружи проще (пример: нейросеть внутри сложна, а общение с ней — просто чат).</li>
+      <li><b>Способность к взаимодействию.</b> Разные системы должны «разговаривать» друг с другом.</li>
+      <li><b>Исчезновение посредников.</b> Билет на самолёт покупается напрямую у авиакомпании, а не через турагентство.</li>
+      <li><b>Глобализация.</b> Компания через интернет ведёт бизнес хоть с другого конца света.</li>
+      <li><b>Конвергенция</b> — слияние технологий в одном продукте (смартфон = телефон + камера + навигатор + плеер).</li>
+    </ul>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Если раньше отдельная фирма продавала билеты, а сейчас всё через приложение авиакомпании — это тренд «ликвидация посредников». А умные часы, которые ещё и платёжная карта, и фитнес-трекер — чистая конвергенция.</div>
+
+    <h4>Роль ИТ в развитии общества и экономики</h4>
+    <p>ИТ экономят все виды ресурсов. Раньше ИТ считались инструментом продуктивности одного сотрудника, сейчас — фактор конкурентоспособности всей компании.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Компания, которая ещё 10 лет назад держала бухгалтера на телефоне и факсе, сегодня без облачной 1С и электронного документооборота попросту неконкурентоспособна по скорости.</div>
+
+    <h4>Охрана труда при работе на ПК</h4>
+    <p>К работе на ПК допускают только людей без медицинских противопоказаний, прошедших инструктаж, с группой по электробезопасности не ниже первой. Беременные и кормящие женщины к работе на ПК не допускаются.</p>
+    <p>Вредные факторы: электромагнитные и ионизирующие излучения, статическое электричество, блики от экрана, риск поражения током, нагрузка на кисти рук, перенапряжение зрения, умственная усталость, монотонность труда.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Это официальное обоснование, почему на «компьютерных» работах положены регламентированные перерывы и почему офисные кресла/мониторы должны соответствовать нормам эргономики — не прихоть HR, а требование охраны труда.</div>
+  `,
+
+  i2: `
+    <h4>Microsoft Office — что входит в пакет</h4>
+    <p><b>Основные приложения:</b> Word (текстовый процессор), Excel (табличный процессор), PowerPoint (презентации), Access (базы данных), Outlook (почта и планирование). Также исторически были FrontPage, Publisher, Project.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Сегодня большинство «вспомогательных» инструментов (формулы, диаграммы) встроены прямо в интерфейс Word/Excel через ленту — раньше это были отдельные приложения, сейчас границы стёрлись.</div>
+
+    <h4>Word: документы сложной структуры</h4>
+    <p>Как собирается большой документ (диплом, отчёт):</p>
+    <ul>
+      <li>Набор и вычитка текста.</li>
+      <li>Разметка страницы (поля, титульный лист, нумерация).</li>
+      <li>Структура и оглавление — заголовки помечаются стилями («Заголовок 1», «Заголовок 2»), после чего оглавление собирается автоматически.</li>
+      <li>Таблицы и иллюстрации, их нумерация и списки.</li>
+      <li>Предметный указатель (алфавитный список терминов).</li>
+      <li>Сноски и перекрёстные ссылки.</li>
+    </ul>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Ключевая вещь — стили заголовков. Если вручную делать текст жирным вместо стиля «Заголовок 1», автоматическое оглавление не соберётся — самая частая ошибка при оформлении курсовых.</div>
+
+    <h4>Excel: формулы, функции, диаграммы</h4>
+    <p>Всё построено на формулах и адресах ячеек. Типы адресов: <b>относительный (B1)</b> — «едет» при копировании; <b>абсолютный ($B$1)</b> — не меняется; <b>смешанный ($B1 или B$1)</b> — закреплена только строка или столбец.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Абсолютные ссылки нужны, когда есть общий курс валюты в одной ячейке, и вы умножаете на него много строк — без $ при копировании адрес «съедет» и расчёты станут неправильными.</div>
+    <p>Типы диаграмм: <b>гистограмма</b> (сравнение категорий), <b>круговая</b> (доли от целого), <b>график</b> (изменение во времени), <b>точечная</b> (взаимосвязь двух величин).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Типичная ошибка — строить круговую диаграмму для данных, меняющихся во времени (правильно — график). Тип диаграммы должен соответствовать вопросу: «как распределено?» → круговая; «как менялось?» → график.</div>
+
+    <h4>Access: базы данных</h4>
+    <p>СУБД — программа для создания и работы с базами данных. Четыре объекта: <b>таблица</b> (хранит данные), <b>форма</b> (удобный ввод/просмотр), <b>запрос</b> (выборка по условию), <b>отчёт</b> (для печати).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Аналогия: таблица — склад данных, форма — витрина для ввода товара на склад, запрос — поиск по критериям, отчёт — накладная для печати.</div>
+
+    <h4>PowerPoint: презентации</h4>
+    <p>Презентация — документ из слайдов. Дополнительные материалы: <b>структура</b> (заголовки без графики), <b>выдачи</b> (копии для раздачи), <b>заметки</b> (подсказки докладчику, невидимые зрителям).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Заметки — поле под слайдом, куда докладчик пишет «что сказать». Зрители на экране проектора видят только слайд, докладчик на своём ноутбуке — слайд + заметки (режим докладчика).</div>
+
+    <h4>Совместное использование программ MS Office</h4>
+    <p><b>Импорт</b> (статическое копирование) — данные копируются один раз, дальше живут независимо. <b>Связывание</b> — вставленные данные остаются «привязанными» к исходному файлу. <b>Внедрение</b> — данные становятся частью нового файла, редактируются двойным кликом в исходной программе, но не обновляются от исходного файла.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Если вставляете таблицу Excel в презентацию и планируете часто обновлять цифры — используйте связывание: обновили Excel — обновилась и презентация. Если хотите «заморозить» данные — используйте импорт или внедрение.</div>
+  `,
+
+  i3: `
+    <h4>Компьютерные сети: понятия и классификация</h4>
+    <p><b>Компьютерная сеть</b> — компьютеры, соединённые каналами связи для совместной работы с общими ресурсами.</p>
+    <p>Классификация: по территории (локальные/региональные/глобальные), по принадлежности (государственные/ведомственные/корпоративные), по скорости, по среде передачи (проводные/беспроводные), по архитектуре — <b>одноранговая</b> (все компьютеры равны) и <b>серверная</b> (клиент-сервер: есть выделенные серверы и рабочие станции).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Домашняя сеть с общей папкой на ноутбуке — одноранговая. Корпоративная сеть с общим файловым сервером — классический клиент-сервер. Для 3–5 компьютеров одноранговая проще и дешевле, для сотен пользователей — только клиент-сервер.</div>
+
+    <h4>Аппаратное обеспечение сетей</h4>
+    <p><b>Клиентские машины</b> — рабочие компьютеры пользователей. <b>Серверы</b> — мощные компьютеры, предоставляющие ресурсы. <b>Сетевые адаптеры</b> — подключают компьютер к сети.</p>
+    <p>Устройства соединения: <b>хаб</b> (просто соединяет линии), <b>коммутатор/свич</b> (направляет данные нужному получателю), <b>маршрутизатор/роутер</b> (соединяет разные сети между собой), <b>шлюз</b> (соединяет сети с разным ПО/протоколами), <b>модем</b> (цифровой сигнал ↔ аналоговый).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Обычный домашний «роутер» часто совмещает функции роутера + свича + Wi-Fi точки доступа в одном устройстве — поэтому в быту термины смешивают, хотя по факту это разные функции.</div>
+
+    <h4>Программное обеспечение сетей</h4>
+    <p>Сетевые операционные системы обеспечивают: работу с оборудованием и протоколами, маршрутизацию трафика, доступ к удалённым ресурсам, авторизацию пользователей.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Когда вы заходите на рабочий компьютер под своим логином/паролем в офисе — это работа сетевой ОС и протоколов авторизации: сервер проверяет, кто вы, и выдаёт доступ только к разрешённым файлам.</div>
+
+    <h4>Сеть Интернет: понятие и сервисы</h4>
+    <p><b>Интернет</b> — всемирная сеть сетей (INTERconnected NETworks). Появилась из ARPANET (1969), а Всемирную паутину (WWW) придумал Тим Бернерс-Ли в 1989 году.</p>
+    <p>Сервисы: WWW (веб-страницы с гиперссылками), электронная почта (самый первый и массовый сервис), FTP (передача файлов), IRC (чат в реальном времени), IP-телефония, IPTV.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Важно не путать Интернет и WWW — Интернет это вся инфраструктура сети, WWW — лишь один из сервисов поверх неё, наравне с почтой. Фраза «зайти в интернет через браузер» технически не совсем точна — правильнее «зайти в WWW через браузер».</div>
+
+    <h4>Поиск информации в интернете</h4>
+    <p>Три способа: ручной просмотр по гиперссылкам, поисковые машины (Google, Яндекс — ключевые слова), автоматизированные средства (программы-«пауки», обходящие страницы для индексации).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Качество результата сильно зависит от точности ключевых слов — это и называется «релевантность»: чем точнее запрос отражает суть вопроса, тем полезнее выдача.</div>
+
+    <h4>Интернет как средство профессиональной коммуникации</h4>
+    <p>Общение в реальном времени (чат) и с отсрочкой (почта, форумы). Ключевая особенность — трансграничность: не важно, где физически находятся собеседники. Аудитория перестаёт быть просто получателем — сама создаёт и распространяет информацию.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Именно трансграничность и смена роли аудитории объясняют, почему соцсети и мессенджеры так сильно изменили и бизнес-коммуникации, и обычное общение.</div>
+  `,
+
+  i4: `
+    <h4>MathCAD: расчёты и графики</h4>
+    <p><b>MathCAD</b> — программа для инженерных расчётов, где формулы записываются «как в учебнике», а не текстовыми командами как в языках программирования.</p>
+    <p>Если изменить исходные данные — все связанные вычисления по цепочке пересчитываются автоматически. Формула вводится прямо на листе: ставите курсор, печатаете, появляется область формулы с «заполнителями» для операндов.</p>
+    <p>Построение графика: команда Insert → Graph → X-Y Plot, в заполнители по осям подставляются переменные/выражения. В одной области можно построить несколько графиков через запятую.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>MathCAD популярен у инженеров и физиков, потому что документ выглядит буквально как страница из учебника с формулами — в отличие от Excel, где логика вычислений скрыта в ячейках.</div>
+
+    <h4>Уровни программного обеспечения</h4>
+    <p>Пять уровней снизу вверх:</p>
+    <ol>
+      <li><b>Базовое ПО</b> — самый нижний уровень, «зашито» в ПЗУ, отвечает за первое включение.</li>
+      <li><b>Системное ПО</b> — ядро операционной системы, обеспечивает работу всех остальных программ.</li>
+      <li><b>Служебное (сервисное) ПО</b> — утилиты: архиваторы, антивирусы.</li>
+      <li><b>Прикладное ПО</b> — то, с чем работает пользователь: Word, Excel, браузеры.</li>
+      <li><b>Инструментальное ПО</b> — программы для СОЗДАНИЯ других программ: компиляторы, среды разработки (Delphi).</li>
+    </ol>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Аналогия с этажами дома: базовое ПО — фундамент, системное — несущие стены и коммуникации, служебное — сантехник и электрик, прикладное — мебель и техника в квартирах, а инструментальное — строительная фирма, которая всё это возводит.</div>
+
+    <h4>Электронные библиотеки</h4>
+    <p><b>Электронная библиотека</b> — упорядоченная коллекция электронных документов с удобными средствами поиска и навигации.</p>
+    <p>Классификация по способу создания: <b>генерируемые</b> (фонд создаётся самими держателями), <b>агрегируемые</b> (собираются из чужих изданий), <b>смешанные</b>. По составу: <b>монодокументные</b> (один тип документов) и <b>полидокументные</b> (разные типы).</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Классический пример генерируемой библиотеки — архив университета, оцифровывающий собственные диссертации. Пример агрегируемой — Google Книги, собирающая уже существующие издания под одной «крышей».</div>
+  `,
+
+  i5: `
+    <h4>Браузеры</h4>
+    <p>Windows Internet Explorer (историческая разработка Microsoft, сейчас заменён Edge), Mozilla Firefox (свободно распространяемый), Opera, Google Chrome (сейчас самый распространённый в мире, на движке Chromium/WebKit).</p>
+    <p>Главные характеристики браузера: производительность, надёжность, функциональность.</p>
+
+    <h4>Почтовые клиенты</h4>
+    <p><b>Outlook</b> — мощный, но сложный для новичка, поддерживает макросы VBA. <b>Mailbird</b> — лёгкий и простой. <b>eM Client</b> — с календарём, контактами и чатом. <b>Claws Mail</b> — для опытных пользователей, гибкая ручная настройка без мастера импорта. <b>TouchMail</b> — заточен под сенсорные экраны. <b>The Bat!</b> — акцент на защиту переписки от мониторинга третьими лицами.</p>
+    <div class="practice-box"><strong>Как это работает на практике</strong>Сегодня многие вообще не используют отдельные почтовые клиенты, а работают через веб-версию почты в браузере. Почтовые клиенты остаются актуальны для компаний, где нужна интеграция с корпоративным календарём и задачами, или, как в случае The Bat!, повышенные требования к безопасности переписки.</div>
+  `
+};
+
+/* ============ STATE ============ */
+let uiModePref = 'mcq'; // 'mcq' or 'recall'
+
+let state = {
+  subjectId: null,
+  mode: 'practice',      // 'practice' or 'exam' — scope: one topic vs whole subject
+  answerMode: 'mcq',      // 'mcq' or 'recall' — how the question is answered
+  topicId: null,
+  topicName: '',
+  questions: [],          // active question set for this run
+  qi: 0,
+  score: 0,
+  selected: null,          // index chosen but not yet confirmed (mcq)
+  confirmed: false,        // practice mode: answer revealed (mcq)
+  revealed: false,         // recall mode: model answer shown
+  recorded: false,         // whether current question already counted toward score
+  review: [],
+  isMistakesRun: false,    // true when this run is a "repeat only mistakes" round
+  mistakesSource: null     // the set of questions used to build the current mistakes round
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// Returns a fresh copy of a question with its answer options (and correct index) shuffled.
+// Never mutates the original question object, so the source data stays intact for future runs.
+function shuffleQuestionOptions(q){
+  const idxs = shuffle(q.o.map((_, i)=> i));
+  const newO = idxs.map(i=> q.o[i]);
+  const newC = idxs.indexOf(q.c);
+  return Object.assign({}, q, { o:newO, c:newC });
+}
+
+function countTotalQuestions(){
+  let total = 0;
+  Object.values(SUBJECTS).forEach(s=> s.topics.forEach(t=> total += t.questions.length));
+  return total;
+}
+
+function renderFooter(){
+  const el = document.querySelector('footer.note');
+  if(!el) return;
+  el.textContent = countTotalQuestions() + ' вопросов · ' + Object.keys(SUBJECTS).length + ' предмета · без ограничения по времени';
+}
+
+/* ============ RENDER: HOME ============ */
+function renderHome(){
+  const grid = document.getElementById('subjectGrid');
+  grid.innerHTML = '';
+  Object.entries(SUBJECTS).forEach(([id, s])=>{
+    const totalQ = s.topics.reduce((a,t)=>a+t.questions.length,0);
+    const card = document.createElement('div');
+    card.className = 'subject-card ' + s.accent;
+    card.onclick = ()=> openSubject(id);
+    card.innerHTML = `
+      <span class="code">${s.code}</span>
+      <h2>${s.name}</h2>
+      <p>${s.desc}</p>
+      <div class="meta"><span>${s.topics.length} тем · ${totalQ} вопросов</span><span class="arrow">→</span></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome(){
+  state.subjectId = null;
+  showScreen('screen-home');
+}
+
+/* ============ RENDER: TOPICS ============ */
+function setUiMode(mode){
+  uiModePref = mode;
+  document.getElementById('modeBtnMcq').classList.toggle('active', mode === 'mcq');
+  document.getElementById('modeBtnRecall').classList.toggle('active', mode === 'recall');
+  document.getElementById('modeBtnRead').classList.toggle('active', mode === 'read');
+  const hint = document.getElementById('modeHint');
+  if(mode === 'mcq'){
+    hint.textContent = 'Выбираешь один из 4 вариантов, сразу видишь объяснение.';
+  } else if(mode === 'recall'){
+    hint.textContent = 'Видишь вопрос, проговариваешь или пишешь ответ своими словами, потом сверяешься с образцом — как на устном экзамене.';
+  } else {
+    hint.textContent = 'Читаешь конспект по теме простым языком — с формулами, примерами и разбором «как это работает на практике».';
+  }
+  if(state.subjectId) renderTopicList(state.subjectId);
+}
+
+function renderTopicList(subjectId){
+  const s = SUBJECTS[subjectId];
+  const totalQ = s.topics.reduce((a,t)=>a+t.questions.length,0);
+  const isRead = uiModePref === 'read';
+  const isRecall = uiModePref === 'recall';
+
+  document.getElementById('examTitle').textContent = isRead
+    ? 'Читать весь конспект по предмету «' + s.name + '»'
+    : 'Все ' + totalQ + ' вопросов по предмету «' + s.name + '»';
+  const examDesc = document.getElementById('examDesc');
+  if(examDesc){
+    examDesc.textContent = isRead
+      ? 'Все темы подряд, простым языком, с формулами и примерами'
+      : (isRecall ? 'Все вопросы подряд, отвечаешь своими словами · итог самопроверки в конце'
+                  : 'Все вопросы подряд, без подсказок · результат только в конце');
+  }
+  document.getElementById('examCard').onclick = ()=> isRead ? openFullConspect(subjectId) : startExam(subjectId);
+
+  const list = document.getElementById('topicList');
+  list.innerHTML = '';
+  const accentColor = s.accent === 'econ' ? 'var(--econ)' : 'var(--it)';
+  s.topics.forEach((t, idx)=>{
+    const row = document.createElement('div');
+    row.className = 'topic-row';
+    row.onclick = ()=> isRead ? openConspectTopic(subjectId, t.id) : startQuiz(subjectId, t.id);
+    const countLabel = isRead ? 'читать →' : (t.questions.length + ' вопр.');
+    row.innerHTML = `
+      <div class="info">
+        <span class="num" style="background:${accentColor}">${idx+1}</span>
+        <span class="name">${t.name}</span>
+      </div>
+      <span class="count">${countLabel}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function openSubject(id){
+  state.subjectId = id;
+  const s = SUBJECTS[id];
+  document.getElementById('topicsTitle').textContent = s.name;
+  document.getElementById('topicsDesc').textContent = s.desc;
+  document.getElementById('modeBtnMcq').classList.toggle('active', uiModePref === 'mcq');
+  document.getElementById('modeBtnRecall').classList.toggle('active', uiModePref === 'recall');
+  document.getElementById('modeBtnRead').classList.toggle('active', uiModePref === 'read');
+  const hint = document.getElementById('modeHint');
+  if(uiModePref === 'mcq') hint.textContent = 'Выбираешь один из 4 вариантов, сразу видишь объяснение.';
+  else if(uiModePref === 'recall') hint.textContent = 'Видишь вопрос, проговариваешь или пишешь ответ своими словами, потом сверяешься с образцом — как на устном экзамене.';
+  else hint.textContent = 'Читаешь конспект по теме простым языком — с формулами, примерами и разбором «как это работает на практике».';
+  renderTopicList(id);
+  showScreen('screen-topics');
+}
+
+function goTopics(){
+  openSubject(state.subjectId);
+}
+
+/* ============ CONSPECT (read mode) ============ */
+function openConspectTopic(subjectId, topicId){
+  state.subjectId = subjectId;
+  const s = SUBJECTS[subjectId];
+  const idx = s.topics.findIndex(t=>t.id===topicId);
+  const topic = s.topics[idx];
+
+  document.getElementById('conspectTitle').textContent = topic.name;
+  document.getElementById('conspectBody').innerHTML = CONSPECTS[topicId] || '<p>Конспект по этой теме скоро появится.</p>';
+
+  const navHtml = (dir)=>{
+    const targetIdx = idx + dir;
+    if(targetIdx < 0 || targetIdx >= s.topics.length) return null;
+    return s.topics[targetIdx];
+  };
+  const prevTopic = navHtml(-1);
+  const nextTopic = navHtml(1);
+  const navInner = `
+    <button class="conspect-nav-btn" ${prevTopic ? '' : 'disabled'} onclick="${prevTopic ? `openConspectTopic('${subjectId}','${prevTopic.id}')` : ''}">← Пред.</button>
+    <span class="conspect-nav-label">${idx+1} / ${s.topics.length}</span>
+    <button class="conspect-nav-btn" ${nextTopic ? '' : 'disabled'} onclick="${nextTopic ? `openConspectTopic('${subjectId}','${nextTopic.id}')` : ''}">След. →</button>
+  `;
+  const navTop = document.getElementById('conspectNav');
+  const navBottom = document.getElementById('conspectBottomNav');
+  navTop.style.display = 'flex';
+  navBottom.style.display = 'flex';
+  navTop.innerHTML = navInner;
+  navBottom.innerHTML = navInner;
+
+  showScreen('screen-conspect');
+  document.getElementById('screen-conspect').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
+function openFullConspect(subjectId){
+  state.subjectId = subjectId;
+  const s = SUBJECTS[subjectId];
+  document.getElementById('conspectTitle').textContent = 'Весь конспект — ' + s.name;
+  document.getElementById('conspectBody').innerHTML = s.topics.map((t, idx)=>
+    `<div class="conspect-chapter"><h3 class="conspect-chapter-title">${idx+1}. ${t.name}</h3>${CONSPECTS[t.id] || ''}</div>`
+  ).join('');
+  document.getElementById('conspectNav').style.display = 'none';
+  document.getElementById('conspectBottomNav').style.display = 'none';
+  showScreen('screen-conspect');
+  window.scrollTo(0,0);
+}
+
+/* ============ QUIZ LOGIC ============ */
+function startQuiz(subjectId, topicId){
+  const topic = SUBJECTS[subjectId].topics.find(t=>t.id===topicId);
+  state.subjectId = subjectId;
+  state.mode = 'practice';
+  state.answerMode = uiModePref;
+  state.topicId = topicId;
+  state.topicName = topic.name;
+  state.isMistakesRun = false;
+  // Fresh shuffle of question order + option order every time this topic is started/repeated
+  state.questions = shuffle(topic.questions).map(shuffleQuestionOptions);
+  initRun();
+}
+
+function startExam(subjectId){
+  const s = SUBJECTS[subjectId];
+  const all = [];
+  s.topics.forEach(t=>{
+    t.questions.forEach(q=> all.push(Object.assign({}, q, {topicName: t.name})));
+  });
+  state.subjectId = subjectId;
+  state.mode = 'exam';
+  state.answerMode = uiModePref;
+  state.topicId = null;
+  state.topicName = 'Итоговый тест';
+  state.isMistakesRun = false;
+  // Random order of questions in exam mode, plus randomized option order per question
+  state.questions = shuffle(all).map(shuffleQuestionOptions);
+  initRun();
+}
+
+function startMistakesRetry(){
+  const wrong = state.review.filter(r=> !r.correct && r.full).map(r=> r.full);
+  if(wrong.length === 0) return;
+  state.mode = 'practice';
+  state.answerMode = uiModePref;
+  state.topicId = null;
+  state.topicName = 'Работа над ошибками';
+  state.isMistakesRun = true;
+  state.mistakesSource = wrong;
+  state.questions = shuffle(wrong).map(shuffleQuestionOptions);
+  initRun();
+}
+
+function initRun(){
+  state.qi = 0;
+  state.score = 0;
+  state.review = [];
+  showScreen('screen-quiz');
+  resetPerQuestion();
+  renderQuestion();
+}
+
+function resetPerQuestion(){
+  state.selected = null;
+  state.confirmed = false;
+  state.revealed = false;
+  state.recorded = false;
+}
+
+function renderQuestion(){
+  const s = SUBJECTS[state.subjectId];
+  const total = state.questions.length;
+  const q = state.questions[state.qi];
+  const accentColor = s.accent === 'econ' ? 'var(--econ)' : 'var(--it)';
+  const isExam = state.mode === 'exam';
+
+  document.getElementById('quizTopicLabel').textContent = s.code + ' · ' + (isExam ? 'Итоговый тест' : state.topicName) + (q.topicName ? ' · ' + q.topicName : '');
+  const scoreEl = document.getElementById('quizScore');
+  scoreEl.textContent = isExam ? '' : ('Верно: ' + state.score + '/' + total);
+  document.getElementById('progressFill').style.width = Math.round((state.qi/total)*100) + '%';
+  document.getElementById('progressFill').style.background = accentColor;
+  document.getElementById('qIndex').textContent = 'Вопрос ' + (state.qi+1) + ' из ' + total;
+  document.getElementById('qText').textContent = q.q;
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+
+  if(state.answerMode === 'recall'){
+    renderRecallStep(q, total);
+  } else {
+    renderMcqOptions(q);
+  }
+}
+
+function renderMcqOptions(q){
+  document.getElementById('nextBtn').style.display = '';
+  document.getElementById('recallActions').style.display = 'none';
+
+  const letters = ['A','B','C','D'];
+  const optsEl = document.getElementById('optionsList');
+  optsEl.style.display = '';
+  optsEl.innerHTML = '';
+  q.o.forEach((opt, i)=>{
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<span class="bubble">${letters[i]}</span><span>${opt}</span>`;
+    div.onclick = ()=> selectOption(i);
+    optsEl.appendChild(div);
+  });
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = true;
+  nextBtn.textContent = 'Подтвердить ответ';
+}
+
+function renderRecallStep(q, total){
+  const optsEl = document.getElementById('optionsList');
+  optsEl.innerHTML = `
+    <div class="recall-box">
+      <span class="recall-label">Твой ответ (по желанию, только для тебя — нигде не сохраняется)</span>
+      <textarea id="recallInput" placeholder="Своими словами: что бы ты сказал на устном ответе?"></textarea>
+    </div>
+  `;
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.style.display = 'none';
+  const recallActions = document.getElementById('recallActions');
+  recallActions.style.display = 'flex';
+  recallActions.innerHTML = `<button class="btn" onclick="revealRecallAnswer()">Показать ответ</button>`;
+}
+
+function revealRecallAnswer(){
+  const q = state.questions[state.qi];
+  const total = state.questions.length;
+  const isLast = state.qi === total - 1;
+  state.revealed = true;
+
+  const notesEl = document.getElementById('recallInput');
+  state.currentNotes = notesEl ? notesEl.value.trim() : '';
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show';
+  fb.innerHTML = `<strong>Как можно ответить</strong>${q.o[q.c]}. ${q.e}`;
+
+  const recallActions = document.getElementById('recallActions');
+  recallActions.innerHTML = `
+    <button class="btn didnt" onclick="rateRecall(false)">Не знал / ошибся</button>
+    <button class="btn knew" onclick="rateRecall(true)">Знал, ответил похоже</button>
+  `;
+}
+
+function rateRecall(knew){
+  if(state.recorded) return;
+  const q = state.questions[state.qi];
+  state.recorded = true;
+  if(knew) state.score++;
+  state.review.push({
+    q: q.q,
+    correct: knew,
+    yourAnswer: state.currentNotes ? state.currentNotes : '(заметки не оставлены)',
+    rightAnswer: q.o[q.c] + ' ' + q.e,
+    explain: '',
+    topicName: q.topicName || null,
+    isRecall: true,
+    full: q
+  });
+
+  const total = state.questions.length;
+  if(state.qi < total - 1){
+    state.qi++;
+    resetPerQuestion();
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function selectOption(i){
+  // locked once a practice-mode answer has been confirmed (revealed)
+  if(state.mode === 'practice' && state.confirmed) return;
+  state.selected = i;
+
+  document.querySelectorAll('.option').forEach((el, idx)=>{
+    el.classList.toggle('selected', idx === i);
+  });
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = false;
+  const total = state.questions.length;
+  const isLast = state.qi === total - 1;
+  if(state.mode === 'exam'){
+    nextBtn.textContent = isLast ? 'Завершить тест' : 'Далее →';
+  } else {
+    nextBtn.textContent = 'Подтвердить ответ';
+  }
+}
+
+function primaryAction(){
+  if(state.selected === null) return;
+  const total = state.questions.length;
+  const isLast = state.qi === total - 1;
+
+  if(state.mode === 'practice' && !state.confirmed){
+    revealPracticeAnswer();
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.textContent = isLast ? 'Показать результат' : 'Дальше →';
+    return;
+  }
+
+  recordAnswerIfNeeded();
+  if(isLast){
+    showResults();
+  } else {
+    state.qi++;
+    resetPerQuestion();
+    renderQuestion();
+  }
+}
+
+function recordAnswerIfNeeded(){
+  if(state.recorded) return;
+  state.recorded = true;
+  const q = state.questions[state.qi];
+  const i = state.selected;
+  const correct = (i === q.c);
+  if(correct) state.score++;
+  state.review.push({
+    q: q.q,
+    correct: correct,
+    yourAnswer: q.o[i],
+    rightAnswer: q.o[q.c],
+    explain: q.e,
+    topicName: q.topicName || null,
+    full: q
+  });
+}
+
+function revealPracticeAnswer(){
+  const q = state.questions[state.qi];
+  const i = state.selected;
+  state.confirmed = true;
+  recordAnswerIfNeeded();
+
+  document.querySelectorAll('.option').forEach((el, idx)=>{
+    el.classList.add('locked');
+    if(idx === q.c) el.classList.add('correct');
+    if(idx === i && i !== q.c) el.classList.add('incorrect');
+  });
+
+  const correct = (i === q.c);
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (correct ? 'ok' : 'bad');
+  fb.innerHTML = `<strong>${correct ? 'Верно' : 'Неверно'}</strong>${q.e}`;
+
+  document.getElementById('quizScore').textContent = 'Верно: ' + state.score + '/' + state.questions.length;
+}
+
+/* ============ RESULTS ============ */
+function showResults(){
+  const s = SUBJECTS[state.subjectId];
+  const total = state.questions.length;
+  const pct = Math.round((state.score/total)*100);
+  const accentColor = s.accent === 'econ' ? 'var(--econ)' : 'var(--it)';
+  const isExam = state.mode === 'exam';
+  const isRecall = state.answerMode === 'recall';
+  const label = (isExam ? 'Итоговый тест · ' + s.name : state.topicName) + (isRecall ? ' · своими словами' : '');
+
+  document.getElementById('resultScore').textContent = state.score + '/' + total;
+  document.getElementById('resultScore').style.color = accentColor;
+  document.getElementById('resultLabel').textContent = label + ' · ' + pct + (isRecall ? '% ты сам оценил как «знал»' : '% правильных ответов');
+  document.getElementById('resultBarFill').style.width = pct + '%';
+  document.getElementById('resultBarFill').style.background = accentColor;
+
+  let msg;
+  if(isRecall){
+    if(pct === 100) msg = "Ты сам отметил, что ответил на всё уверенно. Хороший знак — но перечитай разбор ниже ещё раз перед экзаменом, память любит повторение.";
+    else if(pct >= 70) msg = "Большинство вопросов даются уверенно. Пройдись по тем, где отметил «не знал» — именно они, скорее всего, всплывут на экзамене как слабое место.";
+    else msg = "Это нормально на первом проходе — активное вспоминание работает не сразу. Загляни в конспект по темам, где были заминки, и пройди эти вопросы ещё раз через день-два.";
+  } else {
+    if(pct === 100) msg = isExam ? "Все вопросы по предмету верны. Отличный результат перед экзаменом." : "Идеально. Тема закрыта, можно переходить к следующей.";
+    else if(pct >= 80) msg = "Хороший результат. Загляни в объяснения к вопросам с ошибками — и можно двигаться дальше.";
+    else if(pct >= 50) msg = isExam ? "Половина предмета усвоена уверенно. Разбери вопросы с ошибками ниже — видно, какие темы подтянуть." : "Половина темы понятна, но стоит перечитать конспект по этому разделу перед следующей попыткой.";
+    else msg = isExam ? "Пока рано на экзамен — по разбору ниже видно, какие темы нужно повторить в первую очередь." : "Тема пока не усвоена. Есть смысл вернуться к конспекту по этой теме и попробовать снова.";
+  }
+  document.getElementById('resultMsg').textContent = msg;
+
+  const wrongCount = state.review.filter(r=> !r.correct).length;
+  const actionsEl = document.getElementById('resultActions');
+  actionsEl.innerHTML = `
+    <button class="btn" onclick="retryTopic()">Пройти ещё раз</button>
+    ${wrongCount > 0 ? `<button class="btn" onclick="startMistakesRetry()">Повторить только ошибки (${wrongCount})</button>` : ''}
+    <button class="btn ghost" onclick="goTopics()">Другая тема</button>
+    <button class="btn ghost" onclick="goHome()">На главную</button>
+  `;
+
+  const reviewList = document.getElementById('reviewList');
+  reviewList.innerHTML = '';
+  state.review.forEach((r, i)=>{
+    const div = document.createElement('div');
+    div.className = 'review-item ' + (r.correct ? 'ok' : 'bad');
+    const topicTag = r.topicName ? `<span style="opacity:.7">[${r.topicName}]</span> ` : '';
+    if(r.isRecall){
+      div.innerHTML = `
+        <span class="mark">${r.correct ? '✓' : '✕'}</span>
+        <div>
+          <div class="rq">${i+1}. ${topicTag}${r.q}</div>
+          <div class="ra">Твои заметки: ${r.yourAnswer}</div>
+          <div class="ra" style="margin-top:3px;">Как ответить: ${r.rightAnswer}</div>
+        </div>
+      `;
+    } else {
+      div.innerHTML = `
+        <span class="mark">${r.correct ? '✓' : '✕'}</span>
+        <div>
+          <div class="rq">${i+1}. ${topicTag}${r.q}</div>
+          <div class="ra">${r.correct ? 'Твой ответ: ' + r.yourAnswer : 'Твой ответ: ' + r.yourAnswer + ' · Правильно: ' + r.rightAnswer}</div>
+          <div class="ra" style="margin-top:3px;">${r.explain}</div>
+        </div>
+      `;
+    }
+    reviewList.appendChild(div);
+  });
+
+  showScreen('screen-results');
+}
+
+function retryTopic(){
+  if(state.isMistakesRun){
+    if(state.mistakesSource && state.mistakesSource.length){
+      state.questions = shuffle(state.mistakesSource).map(shuffleQuestionOptions);
+      initRun();
+    } else {
+      goTopics();
+    }
+  } else if(state.mode === 'exam'){
+    startExam(state.subjectId);
+  } else {
+    startQuiz(state.subjectId, state.topicId);
+  }
+}
+
+/* ============ INIT ============ */
+renderHome();
+renderFooter();
+</script>
+</body>
+</html>
