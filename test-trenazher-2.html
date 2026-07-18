@@ -141,10 +141,11 @@
     font-size:12px;
     color:var(--ink-soft);
     cursor:pointer;
-    margin-bottom:22px;
+    margin:-10px 0 12px -4px;
     background:none;
     border:none;
-    padding:0;
+    padding:10px 8px;
+    min-height:44px;
   }
   .back-link:hover{ color:var(--ink); }
   .topics-title{
@@ -243,7 +244,8 @@
   .mode-btn{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
-    padding:9px 14px;
+    padding:11px 14px;
+    min-height:44px;
     border:1.5px solid var(--ink);
     background:transparent;
     color:var(--ink);
@@ -266,7 +268,7 @@
     border:none;
     background:transparent;
     font-family:'IBM Plex Sans', sans-serif;
-    font-size:14.5px;
+    font-size:16px;
     color:var(--ink);
     outline:none;
     line-height:1.5;
@@ -362,7 +364,8 @@
   .conspect-nav-btn{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
-    padding:9px 14px;
+    padding:11px 14px;
+    min-height:44px;
     border:1.5px solid var(--ink);
     background:transparent;
     color:var(--ink);
@@ -384,17 +387,110 @@
     align-items:center;
     justify-content:space-between;
     margin-bottom:18px;
+    gap:12px;
   }
+  .quiz-exit-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:10px 8px 10px 0;
+    margin:-10px 0 -10px -4px;
+    min-height:44px;
+    flex-shrink:0;
+  }
+  .quiz-exit-btn:hover{ color:var(--ink); }
   .quiz-topic-label{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
     color:var(--ink-soft);
+    flex:1;
+    text-align:center;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .quiz-score{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
     font-weight:600;
+    flex-shrink:0;
   }
+
+  /* ---------- EXIT CONFIRM MODAL ---------- */
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(35,38,31,0.55);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{
+    background:var(--paper-card);
+    border:1.5px solid var(--ink);
+    box-shadow:6px 6px 0 rgba(35,38,31,0.9);
+    max-width:340px;
+    width:100%;
+    padding:24px 22px;
+    animation:fadeIn .2s ease;
+  }
+  .modal-box .modal-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:16px;
+    font-weight:700;
+    margin:0 0 8px;
+  }
+  .modal-box .modal-text{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.55;
+    margin:0 0 22px;
+  }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+  }
+  .modal-actions .btn{ flex:1; text-align:center; }
+
+  /* ---------- SCROLL TO TOP ---------- */
+  .scroll-top-btn{
+    position:fixed;
+    right: calc(18px + env(safe-area-inset-right));
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    line-height:1;
+    cursor:pointer;
+    box-shadow:2px 2px 0 rgba(35,38,31,0.5);
+    opacity:0;
+    transform:translateY(8px);
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:90;
+  }
+  .scroll-top-btn.show{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+  .scroll-top-btn:active{ transform:scale(0.92); }
   .progress-track{
     height:6px;
     background:var(--line);
@@ -594,6 +690,7 @@
   <!-- QUIZ -->
   <div class="screen" id="screen-quiz">
     <div class="quiz-top">
+      <button class="quiz-exit-btn" onclick="requestExitQuiz()">← Назад</button>
       <div class="quiz-topic-label" id="quizTopicLabel"></div>
       <div class="quiz-score" id="quizScore"></div>
     </div>
@@ -631,6 +728,19 @@
 
   <footer class="note">62 вопроса · 2 предмета · без ограничения по времени</footer>
 </div>
+
+<div class="modal-overlay" id="exitModal" onclick="if(event.target===this) closeExitModal()">
+  <div class="modal-box">
+    <div class="modal-title">Прервать тест?</div>
+    <div class="modal-text" id="exitModalText">Прогресс по этому тесту не сохранится. Вы точно хотите выйти?</div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeExitModal()">Остаться</button>
+      <button class="btn" onclick="confirmExitQuiz()">Да, выйти</button>
+    </div>
+  </div>
+</div>
+
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()" aria-label="Наверх">↑</button>
 
 <script>
 /* ============ DATA ============ */
@@ -1261,6 +1371,9 @@ function renderHome(){
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  const stb = document.getElementById('scrollTopBtn');
+  if(stb) stb.classList.remove('show');
 }
 
 function goHome(){
@@ -1447,6 +1560,29 @@ function resetPerQuestion(){
   state.confirmed = false;
   state.revealed = false;
   state.recorded = false;
+}
+
+/* ============ EXIT CONFIRMATION ============ */
+function requestExitQuiz(){
+  const isExam = state.mode === 'exam';
+  const modalText = document.getElementById('exitModalText');
+  modalText.textContent = isExam
+    ? 'Ты проходишь итоговый тест по всему предмету. Весь прогресс и текущий счёт будут потеряны. Точно выйти?'
+    : 'Прогресс по этой теме не сохранится. Точно выйти?';
+  document.getElementById('exitModal').classList.add('show');
+}
+
+function closeExitModal(){
+  document.getElementById('exitModal').classList.remove('show');
+}
+
+function confirmExitQuiz(){
+  closeExitModal();
+  if(state.subjectId){
+    goTopics();
+  } else {
+    goHome();
+  }
 }
 
 function renderQuestion(){
@@ -1720,6 +1856,30 @@ function retryTopic(){
     startQuiz(state.subjectId, state.topicId);
   }
 }
+
+/* ============ SCROLL TO TOP ============ */
+function scrollToTop(){
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+(function initScrollTopBtn(){
+  const btn = document.getElementById('scrollTopBtn');
+  let ticking = false;
+  function update(){
+    if(window.scrollY > 420){
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+})();
 
 /* ============ INIT ============ */
 renderHome();
